@@ -32,13 +32,14 @@ repositories {
   maven { url "https://jitpack.io" }
 }
 
-
 def jme3 = ["v" : '[3.1,)', "g": "org.jmonkeyengine"]
+/*
 def pesegato = ["g" :"com.pesegato" ,"v":"latest.integration"]
 if (isCiServer){
 	pesegato.g="com.github.Pesegato"
 	pesegato.v="-SNAPSHOT"
 }
+*/
 
 dependencies {
   // jme
@@ -46,7 +47,6 @@ dependencies {
 	compile 'org.slf4j:slf4j-api:1.7.13'
 	compile 'com.simsilica:lemur:1.8.2'
 	compile 'com.google.guava:guava:19.0'
-	compile "${pesegato.g}:GoldMonkey:${pesegato.v}"
 	runtime 'ch.qos.logback:logback-classic:1.1.2'
 	runtime "${jme3.g}:jme3-desktop:${jme3.v}"
   runtime "${jme3.g}:jme3-lwjgl:${jme3.v}"
