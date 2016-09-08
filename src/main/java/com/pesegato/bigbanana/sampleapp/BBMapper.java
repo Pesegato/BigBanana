@@ -13,6 +13,7 @@ public class BBMapper extends BaseAppState{
      */
 
     public static void init(){
+        /*
         try {
             InputBindings.MOVEUP_K = KeyInput.class.getField("KEY_W").getInt(null);
             InputBindings.MOVEDN_K = KeyInput.class.getField("KEY_S").getInt(null);
@@ -23,6 +24,7 @@ public class BBMapper extends BaseAppState{
         }catch (Exception e){
             e.printStackTrace();
         }
+        */
     }
 
     @Override
