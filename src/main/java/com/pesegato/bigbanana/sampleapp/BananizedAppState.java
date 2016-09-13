@@ -16,10 +16,12 @@ import com.pesegato.bigbanana.BigBananaReceiver;
 import com.simsilica.lemur.event.DefaultMouseListener;
 import com.simsilica.lemur.event.MouseEventControl;
 
+import java.util.ArrayList;
+
 public class BananizedAppState extends BaseAppState implements BigBananaReceiver {
 
     int focus=0;
-    Material m[]=new Material[5];
+    ArrayList<Spatial> focusable=new ArrayList<>();
 
     @Override
     protected void initialize(Application app) {
@@ -28,35 +30,36 @@ public class BananizedAppState extends BaseAppState implements BigBananaReceiver
             Box b = new Box(1, 1, 1);
             Geometry geom = new Geometry("Box", b);
 
-            m[i] = new Material(getApplication().getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
-            m[i].setColor("Color", ColorRGBA.Blue);
-            geom.setMaterial(m[i]);
+            Material m = new Material(getApplication().getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+            m.setColor("Color", ColorRGBA.Blue);
+            geom.setMaterial(m);
             geom.setLocalTranslation(-8 + i * 4, 0, -4);
 
+            focusable.add(geom);
 
             MouseEventControl.addListenersToSpatial(geom,
                     new DefaultMouseListener() {
                         @Override
                         protected void click(MouseButtonEvent event, Spatial target, Spatial capture ) {
-                            Material m = ((Geometry)target).getMaterial();
-                            m.setColor("Color", ColorRGBA.Red);
+                            press(target);
+                            /*
+                            button filtering is beyond the current scope of BigBanana
                             if( event.getButtonIndex() == MouseInput.BUTTON_LEFT ) {
                                 target.move(0, 0.1f, 0);
                             } else {
                                 target.move(0, -0.1f, 0);
                             }
+                            */
                         }
 
                         @Override
                         public void mouseEntered(MouseMotionEvent event, Spatial target, Spatial capture ) {
-                            Material m = ((Geometry)target).getMaterial();
-                            m.setColor("Color", ColorRGBA.Yellow);
+                            focus(target);
                         }
 
                         @Override
                         public void mouseExited( MouseMotionEvent event, Spatial target, Spatial capture ) {
-                            Material m = ((Geometry)target).getMaterial();
-                            m.setColor("Color", ColorRGBA.Blue);
+                            unfocus(target);
                         }
                     });
 
@@ -83,18 +86,33 @@ public class BananizedAppState extends BaseAppState implements BigBananaReceiver
 
     @Override
     public void pressedOK() {
-        m[focus].setColor("Color", ColorRGBA.Red);
-        System.out.println("OK!");
+        press(focusable.get(focus));
     }
 
     @Override
     public void pressedCancel() {
-        System.out.println("next! Focus: "+focus);
-        m[focus].setColor("Color", ColorRGBA.Blue);
+        if (focus!=-1)
+            unfocus(focusable.get(focus));
         focus++;
-        if (focus>4)
+        if (focus>=focusable.size())
             focus=0;
-        m[focus].setColor("Color", ColorRGBA.Yellow);
+        focus(focusable.get(focus));
+    }
+
+    public void focus(Spatial geo){
+        Material m = ((Geometry)geo).getMaterial();
+        m.setColor("Color", ColorRGBA.Yellow);
+        focus=focusable.indexOf(geo);
+    }
+
+    public void unfocus(Spatial geo){
+        Material m = ((Geometry)geo).getMaterial();
+        m.setColor("Color", ColorRGBA.Blue);
+    }
+
+    public void press(Spatial geo){
+        Material m = ((Geometry)geo).getMaterial();
+        m.setColor("Color", ColorRGBA.Red);
     }
 
     @Override
