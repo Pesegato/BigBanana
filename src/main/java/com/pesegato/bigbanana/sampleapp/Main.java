@@ -37,8 +37,7 @@ public class Main extends SimpleApplication {
         getProperties("BigBanana","test");
 
         BigBananaAppState bbas=new BigBananaAppState();
-        BananizedAppState ban=new BananizedAppState();
-        bbas.setReceiver(ban);
+        BananizedAppState ban=new BananizedAppState(bbas.receiver);
         stateManager.attachAll(bbas,ban);
 
     }

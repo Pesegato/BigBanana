@@ -37,4 +37,7 @@ public class TestCube implements FocusHandler {
         m.setColor("Color", ColorRGBA.Red);
     }
 
+    public Geometry getGeometry(){
+        return geom;
+    }
 }

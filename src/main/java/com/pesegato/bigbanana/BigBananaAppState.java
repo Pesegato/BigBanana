@@ -22,7 +22,7 @@ public class BigBananaAppState extends BaseAppState implements StateFunctionList
     public static final FunctionId F_CANCEL = new FunctionId(GROUP_BIGBANANA, STR_CANCEL);
     InputMapper inputMapper;
 
-    BigBananaReceiver receiver;
+    public BigBananaReceiver receiver=new BigBananaReceiver();
 
     public static HashMap<Geometry, FocusHandler> focusMap=new HashMap<>();
 
@@ -48,9 +48,6 @@ public class BigBananaAppState extends BaseAppState implements StateFunctionList
 
     }
 
-    public void setReceiver(BigBananaReceiver receiver){
-        this.receiver=receiver;
-    }
 
     @Override
     protected void cleanup(Application app) {
@@ -75,7 +72,7 @@ public class BigBananaAppState extends BaseAppState implements StateFunctionList
                     receiver.pressedOK();
                     break;
                 case STR_CANCEL:
-                    receiver.pressedCancel();
+                    receiver.pressedNext();
                     break;
             }
         }
