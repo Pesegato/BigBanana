@@ -3,9 +3,12 @@ package com.pesegato.bigbanana;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
+import com.jme3.scene.Geometry;
 import com.pesegato.bigbanana.sampleapp.BBMapper;
 import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.input.*;
+
+import java.util.HashMap;
 
 public class BigBananaAppState extends BaseAppState implements StateFunctionListener {
 
@@ -20,6 +23,8 @@ public class BigBananaAppState extends BaseAppState implements StateFunctionList
     InputMapper inputMapper;
 
     BigBananaReceiver receiver;
+
+    public static HashMap<Geometry, FocusHandler> focusMap=new HashMap<>();
 
     @Override
     protected void initialize(Application app) {
