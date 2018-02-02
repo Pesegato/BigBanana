@@ -59,19 +59,14 @@ public class BigBananaAppState extends BaseAppState implements StateFunctionList
     public static Button PAD_START;
     public static Button PAD_HOME;
     public static Button PAD_BACK;
-    public static int KEYBOARD_GREEN_A;
-    public static int KEYBOARD_RED_B;
-    public static int KEYBOARD_BLUE_X;
-    public static int KEYBOARD_YELLOW_Y;
-    public static int KEYBOARD_START;
-    public static int KEYBOARD_HOME;
-    public static int KEYBOARD_BACK;
+
+    public static int BIGBANANA_KEYBOARD[];
 
     public static Properties props = new Properties();
     public static String defPath;
     public static String mod = null;
 
-    public static final void preInit(String folderName, String fileName, ClassLoader cl) throws Exception {
+    public static final void preInit(String folderName, String fileName, ClassLoader cl, BigBananaPeel peel) throws Exception {
         if (COOKED_BUILD) {
             BUILD_REVISION = "cooked build";
             BUILD_DATE = "now";
@@ -88,16 +83,16 @@ public class BigBananaAppState extends BaseAppState implements StateFunctionList
                 BUILD_REVISION = prop.getProperty("build.revision");
                 BUILD_DATE = prop.getProperty("build.date");
             } catch (IOException ex) {
-                java.util.logging.Logger.getLogger(BigBananaAppState.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+                log.error(null, ex);
             }
         }
         log.info("build revision: " + BUILD_REVISION);
         log.info("build date: " + BUILD_DATE);
 
-        props = getProperties(folderName, fileName);
+        props = getProperties(folderName, fileName, peel);
     }
 
-    public static Properties getProperties(String folderName, String fileName) throws Exception {
+    public static Properties getProperties(String folderName, String fileName, BigBananaPeel peel) throws Exception {
         try {
 
             defPath = "~/." + folderName + "/";
@@ -109,7 +104,7 @@ public class BigBananaAppState extends BaseAppState implements StateFunctionList
             File f = new File(defPath);
             if (!userSettings.exists()) {
                 f.mkdirs();
-                InputStream in = null;//GameGlobals.class.getResourceAsStream(COOKED_BUILD ? "" : "/" + fileName + ".properties");
+                InputStream in = peel.getDefaultConfigFile(fileName);
                 FileOutputStream fout = new FileOutputStream(userSettings);
                 int readBytes;
                 byte[] buffer = new byte[4096];
@@ -121,12 +116,18 @@ public class BigBananaAppState extends BaseAppState implements StateFunctionList
             }
             FileReader reader = new FileReader(userSettings);
             props.load(reader);
-            BigBananaAppState.KEYBOARD_MOVE_UP = getKeyboardInput("keyboard.move.up", "W");
-            BigBananaAppState.KEYBOARD_MOVE_DOWN = getKeyboardInput("keyboard.move.down", "S");
-            BigBananaAppState.KEYBOARD_MOVE_RIGHT = getKeyboardInput("keyboard.move.right", "D");
-            BigBananaAppState.KEYBOARD_MOVE_LEFT = getKeyboardInput("keyboard.move.left", "A");
-            //InputBindings.PAUSE_KEY = getKeyboardInput("my.cool.action", "Space");
+            BigBananaAppState.KEYBOARD_MOVE_UP = getKeyboardInput("keyboard.move.up", peel.getDefaultBind("keyboard.move.up"));
+            BigBananaAppState.KEYBOARD_MOVE_DOWN = getKeyboardInput("keyboard.move.down", peel.getDefaultBind("keyboard.move.down"));
+            BigBananaAppState.KEYBOARD_MOVE_RIGHT = getKeyboardInput("keyboard.move.right", peel.getDefaultBind("keyboard.move.right"));
+            BigBananaAppState.KEYBOARD_MOVE_LEFT = getKeyboardInput("keyboard.move.left", peel.getDefaultBind("keyboard.move.left"));
 
+            BIGBANANA_KEYBOARD = new int[BBBindings.getSize()];
+            for (int i = 0; i < BBBindings.getSize(); i++) {
+                String action = BBBindings.bbmapping.get(i);
+                BIGBANANA_KEYBOARD[i] = getKeyboardInput(action, peel.getDefaultBind(action));
+            }
+
+            peel.loadDefaults();
             reader.close();
         } catch (Exception e) {
             log.error("Error while loading user settings", e);
@@ -137,24 +138,17 @@ public class BigBananaAppState extends BaseAppState implements StateFunctionList
 
     private static int getKeyboardInput(String key, String deflt) throws NoSuchFieldException, IllegalAccessException {
         String val = props.getProperty(key, deflt);
-        for (int i = 0; i < 0xff; i++)
-            if (KeyNames.getName(i).equals(val))
+        for (int i = 0; i < 0xff; i++) {
+            if (KeyNames.getName(i).equals(val)) {
                 return i;
+            }
+        }
         //return KeyInput.class.getField(props.getProperty(key, deflt)).getInt(null);
         return KeyInput.KEY_UNKNOWN;
     }
 
     @Override
     protected void initialize(Application app) {
-        /*
-        String gmPath[] = new String[]{};
-        app.getAssetManager().registerLocator("assets", FileLocator.class);
-        GoldMonkeyAppState gma = new GoldMonkeyAppState(false, COOKED_BUILD, "Normal", gmPath);
-        if (mod != null) {
-            gma.setBasePath("mods/GoldMonkey/");
-        }
-        getStateManager().attach(gma);
-        */
         InputMapper inputMapper = GuiGlobals.getInstance().getInputMapper();
         inputMapper.map(F_X_AXIS, InputState.Negative, PAD_MOVE_VERTICAL);
         inputMapper.map(F_X_AXIS, KEYBOARD_MOVE_RIGHT);

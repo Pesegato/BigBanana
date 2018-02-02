@@ -53,7 +53,7 @@ public class RemapInputAppState extends BaseAppState {
         addKeyboardButton("keyboard.move.down");
         addKeyboardButton("keyboard.move.right");
         addKeyboardButton("keyboard.move.left");
-        for (int i = 0; i < BigBananaMapping.getSize(); i++) {
+        for (int i = 0; i < BBBindings.getSize(); i++) {
             addKeyboardButton("bigbanana.keyboard." + i);
         }
 
@@ -83,7 +83,7 @@ public class RemapInputAppState extends BaseAppState {
                 if (selected != null) {
 
                     try {
-                        String propKey = BigBananaMapping.getMapping(mappings.get(selected));
+                        String propKey = BBBindings.getMapping(mappings.get(selected));
                         int keykey = Integer.parseInt(name);
                         String userFriendlyName = KeyNames.getName(keykey);
                         System.out.println(propKey + " / " + keykey + " / " + userFriendlyName);
@@ -95,8 +95,6 @@ public class RemapInputAppState extends BaseAppState {
                                 + //name = "22"
                                 //KeyNames.getName(Integer.parseInt(name)) = "Backspace"
                                 userFriendlyName
-                        //KeyNames.getName(Integer.parseInt(name))
-                        //KeyNames.getName(Integer.parseInt(name))
                         );
                         selected = null;
                     } catch (Exception ex) {
@@ -117,7 +115,7 @@ public class RemapInputAppState extends BaseAppState {
             return;
         }
         selected = ab;
-        selected.setText(BigBananaMapping.getMapping(mappings.get(ab)) + " ...");
+        selected.setText(BBBindings.getMapping(mappings.get(ab)) + " ...");
     }
 
     public void KeyboardMoveUp() {
@@ -140,9 +138,85 @@ public class RemapInputAppState extends BaseAppState {
         setSelectedButton(mappings2.get("bigbanana.keyboard.0"));
     }
 
+    public void BigbananaKeyboard1() {
+        setSelectedButton(mappings2.get("bigbanana.keyboard.1"));
+    }
+
+    public void BigbananaKeyboard2() {
+        setSelectedButton(mappings2.get("bigbanana.keyboard.2"));
+    }
+
+    public void BigbananaKeyboard3() {
+        setSelectedButton(mappings2.get("bigbanana.keyboard.3"));
+    }
+
+    public void BigbananaKeyboard4() {
+        setSelectedButton(mappings2.get("bigbanana.keyboard.4"));
+    }
+
+    public void BigbananaKeyboard5() {
+        setSelectedButton(mappings2.get("bigbanana.keyboard.5"));
+    }
+
+    public void BigbananaKeyboard6() {
+        setSelectedButton(mappings2.get("bigbanana.keyboard.6"));
+    }
+
+    public void BigbananaKeyboard7() {
+        setSelectedButton(mappings2.get("bigbanana.keyboard.7"));
+    }
+
+    public void BigbananaKeyboard8() {
+        setSelectedButton(mappings2.get("bigbanana.keyboard.8"));
+    }
+
+    public void BigbananaKeyboard9() {
+        setSelectedButton(mappings2.get("bigbanana.keyboard.9"));
+    }
+
+    public void BigbananaKeyboard10() {
+        setSelectedButton(mappings2.get("bigbanana.keyboard.10"));
+    }
+
+    public void BigbananaKeyboard11() {
+        setSelectedButton(mappings2.get("bigbanana.keyboard.11"));
+    }
+
+    public void BigbananaKeyboard12() {
+        setSelectedButton(mappings2.get("bigbanana.keyboard.12"));
+    }
+
+    public void BigbananaKeyboard13() {
+        setSelectedButton(mappings2.get("bigbanana.keyboard.13"));
+    }
+
+    public void BigbananaKeyboard14() {
+        setSelectedButton(mappings2.get("bigbanana.keyboard.14"));
+    }
+
+    public void BigbananaKeyboard15() {
+        setSelectedButton(mappings2.get("bigbanana.keyboard.15"));
+    }
+
+    public void BigbananaKeyboard16() {
+        setSelectedButton(mappings2.get("bigbanana.keyboard.16"));
+    }
+
+    public void BigbananaKeyboard17() {
+        setSelectedButton(mappings2.get("bigbanana.keyboard.17"));
+    }
+
+    public void BigbananaKeyboard18() {
+        setSelectedButton(mappings2.get("bigbanana.keyboard.18"));
+    }
+
+    public void BigbananaKeyboard19() {
+        setSelectedButton(mappings2.get("bigbanana.keyboard.19"));
+    }
+
     private ActionButton addKeyboardButton(String key) {
-        System.out.println(key + "-" + BigBananaMapping.getMapping(key));
-        String bbkey = BigBananaMapping.getMapping(key);
+        System.out.println(key + "-" + BBBindings.getMapping(key));
+        String bbkey = BBBindings.getMapping(key);
         String camelCase = CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, key.replace('.', '_'));
         ActionButton action = mainWindow.addChild(new ActionButton(new CallMethodAction(getMapping(bbkey), this, camelCase)));
         mappings.put(action, key);
