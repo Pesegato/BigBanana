@@ -27,12 +27,12 @@ ext {
 group = "com.pesegato"
 
 repositories {
-  mavenLocal()
-  jcenter()
-  maven { url "https://jitpack.io" }
+	mavenLocal()
+	jcenter()
+	maven { url "https://jitpack.io" }
 }
 
-def jme3 = ["v" : '[3.1,)', "g": "org.jmonkeyengine"]
+def jme3 = ["v": '[3.1,)', "g": "org.jmonkeyengine"]
 /*
 def pesegato = ["g" :"com.pesegato" ,"v":"latest.integration"]
 if (isCiServer){
@@ -42,8 +42,8 @@ if (isCiServer){
 */
 
 dependencies {
-  // jme
-  compile "${jme3.g}:jme3-core:${jme3.v}"
+	// jme
+	compile "${jme3.g}:jme3-core:${jme3.v}"
 	compile 'org.slf4j:slf4j-api:1.7.13'
 	compile 'com.simsilica:lemur:1.10.1'
 	compile 'com.simsilica:lemur-proto:1.9.1'
@@ -51,16 +51,15 @@ dependencies {
 	compile 'com.google.guava:guava:19.0'
 	compile 'net.java.dev.jna:jna:4.2.2'
 	compile 'net.java.dev.jna:jna-platform:4.2.2'
-	compile "com.pesegato:GoldMonkey:[0.1,)"
 	runtime 'ch.qos.logback:logback-classic:1.1.2'
 	runtime "${jme3.g}:jme3-desktop:${jme3.v}"
-  runtime "${jme3.g}:jme3-lwjgl:${jme3.v}"
+	runtime "${jme3.g}:jme3-lwjgl:${jme3.v}"
 
-  //utils
+	//utils
 
-  //assets
+	//assets
 
-  //test
+	//test
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
