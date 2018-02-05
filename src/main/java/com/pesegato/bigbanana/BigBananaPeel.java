@@ -5,17 +5,12 @@
  */
 package com.pesegato.bigbanana;
 
-import java.io.InputStream;
 
 /**
- *
  * @author Pesegato
  */
 public interface BigBananaPeel {
 
-    public InputStream getDefaultConfigFile(String fileName);
-
     public String getDefaultBind(String key);
 
-    public void loadDefaults();
 }

@@ -19,7 +19,7 @@ public class Main extends SimpleApplication implements BigBananaPeel{
     public static void main(String[] args) {
         BBBindings.addMapping(MY_COOL_ACTION);
         try {
-            BigBananaAppState.preInit("BigBanana-sampleapp", "mapping",Main.class.getClassLoader(),new Main());
+            //BigBananaAppState.preInit("BigBanana-sampleapp", "mapping",Main.class.getClassLoader(),new Main());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -37,13 +37,8 @@ public class Main extends SimpleApplication implements BigBananaPeel{
 //        BaseStyles.loadGlassStyle();
         globals.getStyles().setDefaultStyle("glass");
         getStateManager().attachAll(
-                new BigBananaAppState(),
+                new BigBananaAppState(this),
                 new RemapInputAppState());
-    }
-
-    @Override
-    public InputStream getDefaultConfigFile(String fileName) {
-        return null;
     }
 
     @Override
@@ -63,8 +58,4 @@ public class Main extends SimpleApplication implements BigBananaPeel{
         return null;
     }
 
-    @Override
-    public void loadDefaults() {
-
-    }
 }
