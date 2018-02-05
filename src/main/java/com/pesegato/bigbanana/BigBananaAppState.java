@@ -28,6 +28,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -61,6 +62,7 @@ public class BigBananaAppState extends BaseAppState implements StateFunctionList
     public static Button PAD_BACK;
 
     public static int BIGBANANA_KEYBOARD[];
+    public static Button BIGBANANA_BUTTON[];
 
     public static Properties props = new Properties();
     public static String defPath;
@@ -122,9 +124,12 @@ public class BigBananaAppState extends BaseAppState implements StateFunctionList
             BigBananaAppState.KEYBOARD_MOVE_LEFT = getKeyboardInput("keyboard.move.left", peel.getDefaultBind("keyboard.move.left"));
 
             BIGBANANA_KEYBOARD = new int[BBBindings.getSize()];
+            BIGBANANA_BUTTON = new Button[BBBindings.getSize()];
             for (int i = 0; i < BBBindings.getSize(); i++) {
                 String action = BBBindings.bbmapping.get(i);
                 BIGBANANA_KEYBOARD[i] = getKeyboardInput(action, peel.getDefaultBind(action));
+                BIGBANANA_BUTTON[i] = null;
+                getButtonInput(action, peel.getDefaultBind(action));
             }
 
             peel.loadDefaults();
@@ -145,6 +150,14 @@ public class BigBananaAppState extends BaseAppState implements StateFunctionList
         }
         //return KeyInput.class.getField(props.getProperty(key, deflt)).getInt(null);
         return KeyInput.KEY_UNKNOWN;
+    }
+
+    private static int getButtonInput(String key, String deflt) throws NoSuchFieldException, IllegalAccessException {
+        String val = props.getProperty(key, deflt);
+        for (Field field : Button.class.getFields()) {
+            System.out.println(((Button) field.get(null)).getName());
+        }
+        return 0;
     }
 
     @Override

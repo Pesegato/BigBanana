@@ -6,10 +6,10 @@
 package com.pesegato.bigbanana;
 
 import static com.pesegato.bigbanana.BigBananaAppState.*;
+
 import java.util.ArrayList;
 
 /**
- *
  * @author Pesegato
  */
 public class BBBindings {
@@ -23,7 +23,7 @@ public class BBBindings {
     /**
      * This method maps game-specific binding to bigbanana number, because
      * bigbanana don't enforce a name but uses reflection
-     *
+     * <p>
      * like: 'mario.jump' becomes 'bigbanana.keyboard.0'
      *
      * @param name the binding
@@ -44,6 +44,10 @@ public class BBBindings {
         if (key.startsWith("bigbanana.keyboard.")) {
             //int idx = bbmapping.indexOf(key);
             int idx = Integer.parseInt(key.substring(19));
+            return bbmapping.get(idx);
+        } else if (key.startsWith("bigbanana.pad.")) {
+            //int idx = bbmapping.indexOf(key);
+            int idx = Integer.parseInt(key.substring(14));
             return bbmapping.get(idx);
         }
         return key;
