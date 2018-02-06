@@ -14,10 +14,15 @@ import java.util.ArrayList;
  */
 public class BBBindings {
 
-    static ArrayList<String> bbmapping = new ArrayList<>();
+    static ArrayList<String> keybbmapping = new ArrayList<>();
+    static ArrayList<String> padbbmapping = new ArrayList<>();
 
-    public static int getSize() {
-        return bbmapping.size();
+    public static int getKeySize() {
+        return keybbmapping.size();
+    }
+
+    public static int getPadSize() {
+        return padbbmapping.size();
     }
 
     /**
@@ -28,8 +33,12 @@ public class BBBindings {
      *
      * @param name the binding
      */
-    public static void addMapping(String name) {
-        bbmapping.add(name);
+    public static void addKeyMapping(String name) {
+        keybbmapping.add(name);
+    }
+
+    public static void addPadMapping(String name) {
+        padbbmapping.add(name);
     }
 
     public static int getKey(String key) {
@@ -44,17 +53,17 @@ public class BBBindings {
         if (key.startsWith("bigbanana.keyboard.")) {
             //int idx = bbmapping.indexOf(key);
             int idx = Integer.parseInt(key.substring(19));
-            return bbmapping.get(idx);
+            return keybbmapping.get(idx);
         } else if (key.startsWith("bigbanana.pad.")) {
             //int idx = bbmapping.indexOf(key);
             int idx = Integer.parseInt(key.substring(14));
-            return bbmapping.get(idx);
+            return padbbmapping.get(idx);
         }
         return key;
     }
 
-    public static int get(String key) {
-        int idx = bbmapping.indexOf(key);
+    public static int getK(String key) {
+        int idx = keybbmapping.indexOf(key);
         if (idx > -1) {
             return BIGBANANA_KEYBOARD[idx];
         }

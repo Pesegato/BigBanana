@@ -11,6 +11,7 @@ package com.pesegato.bigbanana;
  */
 public interface BigBananaPeel {
 
-    public String getDefaultBind(String key);
+    public String getDefaultKeyBind(String key);
+    public String getDefaultPadBind(String key);
 
 }

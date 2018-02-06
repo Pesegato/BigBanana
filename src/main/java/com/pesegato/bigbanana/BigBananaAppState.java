@@ -10,29 +10,14 @@ import com.jme3.app.state.BaseAppState;
 import com.jme3.input.KeyInput;
 import com.jme3.input.KeyNames;
 import com.simsilica.lemur.GuiGlobals;
+import com.simsilica.lemur.input.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import static com.simsilica.lemur.focus.FocusNavigationFunctions.*;
-
-import com.simsilica.lemur.input.Axis;
-import com.simsilica.lemur.input.Button;
-import com.simsilica.lemur.input.FunctionId;
-import com.simsilica.lemur.input.InputMapper;
-import com.simsilica.lemur.input.InputState;
-import com.simsilica.lemur.input.StateFunctionListener;
-import com.sun.jna.platform.win32.KnownFolders;
-import com.sun.jna.platform.win32.Shell32Util;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.Properties;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static com.simsilica.lemur.focus.FocusNavigationFunctions.*;
 
 /**
  * @author Pesegato
@@ -96,18 +81,21 @@ public class BigBananaAppState extends BaseAppState implements StateFunctionList
     @Override
     protected void initialize(Application app) {
         try {
-            BigBananaAppState.KEYBOARD_MOVE_UP = getKeyboardInput("keyboard.move.up", peel.getDefaultBind("keyboard.move.up"));
-            BigBananaAppState.KEYBOARD_MOVE_DOWN = getKeyboardInput("keyboard.move.down", peel.getDefaultBind("keyboard.move.down"));
-            BigBananaAppState.KEYBOARD_MOVE_RIGHT = getKeyboardInput("keyboard.move.right", peel.getDefaultBind("keyboard.move.right"));
-            BigBananaAppState.KEYBOARD_MOVE_LEFT = getKeyboardInput("keyboard.move.left", peel.getDefaultBind("keyboard.move.left"));
+            BigBananaAppState.KEYBOARD_MOVE_UP = getKeyboardInput("keyboard.move.up", peel.getDefaultKeyBind("keyboard.move.up"));
+            BigBananaAppState.KEYBOARD_MOVE_DOWN = getKeyboardInput("keyboard.move.down", peel.getDefaultKeyBind("keyboard.move.down"));
+            BigBananaAppState.KEYBOARD_MOVE_RIGHT = getKeyboardInput("keyboard.move.right", peel.getDefaultKeyBind("keyboard.move.right"));
+            BigBananaAppState.KEYBOARD_MOVE_LEFT = getKeyboardInput("keyboard.move.left", peel.getDefaultKeyBind("keyboard.move.left"));
 
-            BIGBANANA_KEYBOARD = new int[BBBindings.getSize()];
-            BIGBANANA_BUTTON = new Button[BBBindings.getSize()];
-            for (int i = 0; i < BBBindings.getSize(); i++) {
-                String action = BBBindings.bbmapping.get(i);
-                BIGBANANA_KEYBOARD[i] = getKeyboardInput(action, peel.getDefaultBind(action));
+            BIGBANANA_KEYBOARD = new int[BBBindings.getKeySize()];
+            BIGBANANA_BUTTON = new Button[BBBindings.getPadSize()];
+            for (int i = 0; i < BBBindings.getKeySize(); i++) {
+                String action = BBBindings.keybbmapping.get(i);
+                BIGBANANA_KEYBOARD[i] = getKeyboardInput(action, peel.getDefaultKeyBind(action));
+            }
+            for (int i = 0; i < BBBindings.getPadSize(); i++) {
+                String action = BBBindings.padbbmapping.get(i);
                 BIGBANANA_BUTTON[i] = null;
-                getButtonInput(action, peel.getDefaultBind(action));
+                getButtonInput(action, peel.getDefaultPadBind(action));
             }
         } catch (Exception e) {
             e.printStackTrace();

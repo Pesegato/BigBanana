@@ -17,7 +17,8 @@ public class Main extends SimpleApplication implements BigBananaPeel{
     public static final String MY_COOL_ACTION="my.cool.action";
 
     public static void main(String[] args) {
-        BBBindings.addMapping(MY_COOL_ACTION);
+        BBBindings.addKeyMapping(MY_COOL_ACTION);
+        BBBindings.addPadMapping(MY_COOL_ACTION);
         try {
             //BigBananaAppState.preInit("BigBanana-sampleapp", "mapping",Main.class.getClassLoader(),new Main());
         } catch (Exception e) {
@@ -42,7 +43,7 @@ public class Main extends SimpleApplication implements BigBananaPeel{
     }
 
     @Override
-    public String getDefaultBind(String key) {
+    public String getDefaultKeyBind(String key) {
         switch (key) {
             case "keyboard.move.up":
                 return "W";
@@ -54,6 +55,15 @@ public class Main extends SimpleApplication implements BigBananaPeel{
                 return "A";
             case MY_COOL_ACTION:
                 return "P";
+        }
+        return null;
+    }
+
+    @Override
+    public String getDefaultPadBind(String key) {
+        switch (key) {
+            case MY_COOL_ACTION:
+                return "Mouse Button 1";
         }
         return null;
     }

@@ -56,13 +56,13 @@ public class RemapInputAppState extends BaseAppState {
         addKeyboardButton("keyboard.move.down");
         addKeyboardButton("keyboard.move.right");
         addKeyboardButton("keyboard.move.left");
-        for (int i = 0; i < BBBindings.getSize(); i++) {
+        for (int i = 0; i < BBBindings.getKeySize(); i++) {
             addKeyboardButton("bigbanana.keyboard." + i);
         }
 
         Label title2 = mainWindow2.addChild(new Label("Remap input joy*/mouse"));
         title2.setFontSize(24);
-        for (int i = 0; i < BBBindings.getSize(); i++) {
+        for (int i = 0; i < BBBindings.getPadSize(); i++) {
             addButtonButton("bigbanana.pad." + i);
         }
 
@@ -104,7 +104,7 @@ public class RemapInputAppState extends BaseAppState {
                                 com.simsilica.lemur.input.Button b = (com.simsilica.lemur.input.Button) field.get(null);
                                 if (b.getId().equals(name)) {
                                     System.out.println("pressed " + b.getName());
-                                    BigBananaAppState.props.setProperty(propKey, b.getName());
+                                    BigBananaAppState.props.setProperty("pad." + propKey, b.getName());
                                     saveProps();
                                     selected.setText(
                                             propKey + ": "
@@ -122,7 +122,7 @@ public class RemapInputAppState extends BaseAppState {
                         String userFriendlyName = KeyNames.getName(keykey);
                         System.out.println(propKey + " / " + keykey + " / " + userFriendlyName);
 
-                        BigBananaAppState.props.setProperty(propKey, userFriendlyName);
+                        BigBananaAppState.props.setProperty("keyboard." + propKey, userFriendlyName);
                         saveProps();
                         selected.setText(
                                 propKey + ": "
@@ -250,6 +250,42 @@ public class RemapInputAppState extends BaseAppState {
 
     public void BigbananaPad0() {
         setSelectedButton(mappings2.get("bigbanana.pad.0"));
+    }
+
+    public void BigbananaPad1() {
+        setSelectedButton(mappings2.get("bigbanana.pad.1"));
+    }
+
+    public void BigbananaPad2() {
+        setSelectedButton(mappings2.get("bigbanana.pad.2"));
+    }
+
+    public void BigbananaPad3() {
+        setSelectedButton(mappings2.get("bigbanana.pad.3"));
+    }
+
+    public void BigbananaPad4() {
+        setSelectedButton(mappings2.get("bigbanana.pad.4"));
+    }
+
+    public void BigbananaPad5() {
+        setSelectedButton(mappings2.get("bigbanana.pad.5"));
+    }
+
+    public void BigbananaPad6() {
+        setSelectedButton(mappings2.get("bigbanana.pad.6"));
+    }
+
+    public void BigbananaPad7() {
+        setSelectedButton(mappings2.get("bigbanana.pad.7"));
+    }
+
+    public void BigbananaPad8() {
+        setSelectedButton(mappings2.get("bigbanana.pad.8"));
+    }
+
+    public void BigbananaPad9() {
+        setSelectedButton(mappings2.get("bigbanana.pad.9"));
     }
 
     private ActionButton addKeyboardButton(String key) {
