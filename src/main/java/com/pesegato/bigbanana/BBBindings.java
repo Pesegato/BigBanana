@@ -34,19 +34,12 @@ public class BBBindings {
      * @param name the binding
      */
     public static void addKeyMapping(String name) {
+        //new BBBind(name, "keyboard.");
         keybbmapping.add(name);
     }
 
     public static void addPadMapping(String name) {
         padbbmapping.add(name);
-    }
-
-    public static int getKey(String key) {
-        if (key.startsWith("bigbanana.keyboard.")) {
-            //int idx = bbmapping.indexOf(key);
-            return Integer.parseInt(key.substring(19));
-        }
-        return -1;
     }
 
     public static String getMapping(String key) {
@@ -59,14 +52,7 @@ public class BBBindings {
             int idx = Integer.parseInt(key.substring(14));
             return padbbmapping.get(idx);
         }
-        return key;
+        return "keyboard."+key;
     }
 
-    public static int getK(String key) {
-        int idx = keybbmapping.indexOf(key);
-        if (idx > -1) {
-            return BIGBANANA_KEYBOARD[idx];
-        }
-        return -1;
-    }
 }

@@ -7,23 +7,19 @@ import com.pesegato.bigbanana.BigBananaAppState;
 import com.pesegato.bigbanana.BigBananaPeel;
 import com.pesegato.bigbanana.RemapInputAppState;
 import com.simsilica.lemur.GuiGlobals;
-import com.simsilica.lemur.style.BaseStyles;
 
-import java.io.InputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Properties;
 
 
-public class Main extends SimpleApplication implements BigBananaPeel{
+public class Main extends SimpleApplication implements BigBananaPeel {
 
-    public static final String MY_COOL_ACTION="my.cool.action";
+    public static final String MY_COOL_ACTION = "my.cool.action";
 
     public static void main(String[] args) {
         BBBindings.addKeyMapping(MY_COOL_ACTION);
         BBBindings.addPadMapping(MY_COOL_ACTION);
-        try {
-            //BigBananaAppState.preInit("BigBanana-sampleapp", "mapping",Main.class.getClassLoader(),new Main());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         Main app = new Main();
         app.setShowSettings(false);
         AppSettings settings = new AppSettings(true);
@@ -37,21 +33,38 @@ public class Main extends SimpleApplication implements BigBananaPeel{
         GuiGlobals globals = GuiGlobals.getInstance();
 //        BaseStyles.loadGlassStyle();
         globals.getStyles().setDefaultStyle("glass");
+        try {
+            prop.load(new FileReader(getFilePath()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         getStateManager().attachAll(
                 new BigBananaAppState(this),
                 new RemapInputAppState());
     }
 
+    Properties prop = new Properties();
+
+    @Override
+    public String getFilePath() {
+        return "mapping.properties";
+    }
+
+    @Override
+    public Properties getProperties() {
+        return prop;
+    }
+
     @Override
     public String getDefaultKeyBind(String key) {
         switch (key) {
-            case "keyboard.move.up":
+            case "move.up":
                 return "W";
-            case "keyboard.move.down":
+            case "move.down":
                 return "S";
-            case "keyboard.move.right":
+            case "move.right":
                 return "D";
-            case "keyboard.move.left":
+            case "move.left":
                 return "A";
             case MY_COOL_ACTION:
                 return "P";

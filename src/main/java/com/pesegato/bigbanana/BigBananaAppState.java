@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
-import java.util.Properties;
 
 import static com.simsilica.lemur.focus.FocusNavigationFunctions.*;
 
@@ -49,18 +48,14 @@ public class BigBananaAppState extends BaseAppState implements StateFunctionList
     public static int BIGBANANA_KEYBOARD[];
     public static Button BIGBANANA_BUTTON[];
 
-    public static Properties props = new Properties();
-    public static String defPath;
-    public static String mod = null;
-
     BigBananaPeel peel;
 
     public BigBananaAppState(BigBananaPeel peel) {
         this.peel = peel;
     }
 
-    private static int getKeyboardInput(String key, String deflt) throws NoSuchFieldException, IllegalAccessException {
-        String val = props.getProperty(key, deflt);
+    private int getKeyboardInput(String key, String deflt) throws NoSuchFieldException, IllegalAccessException {
+        String val = peel.getProperties().getProperty("keyboard." + key, deflt);
         for (int i = 0; i < 0xff; i++) {
             if (KeyNames.getName(i).equals(val)) {
                 return i;
@@ -70,21 +65,23 @@ public class BigBananaAppState extends BaseAppState implements StateFunctionList
         return KeyInput.KEY_UNKNOWN;
     }
 
-    private static int getButtonInput(String key, String deflt) throws NoSuchFieldException, IllegalAccessException {
-        String val = props.getProperty(key, deflt);
+    private Button getButtonInput(String key, String deflt) throws NoSuchFieldException, IllegalAccessException {
+        String val = peel.getProperties().getProperty("pad." + key, deflt);
         for (Field field : Button.class.getFields()) {
-            System.out.println(((Button) field.get(null)).getName());
+            Button button = (Button) field.get(null);
+            if (button.getName().equals(val))
+                return button;
         }
-        return 0;
+        return null;
     }
 
     @Override
     protected void initialize(Application app) {
         try {
-            BigBananaAppState.KEYBOARD_MOVE_UP = getKeyboardInput("keyboard.move.up", peel.getDefaultKeyBind("keyboard.move.up"));
-            BigBananaAppState.KEYBOARD_MOVE_DOWN = getKeyboardInput("keyboard.move.down", peel.getDefaultKeyBind("keyboard.move.down"));
-            BigBananaAppState.KEYBOARD_MOVE_RIGHT = getKeyboardInput("keyboard.move.right", peel.getDefaultKeyBind("keyboard.move.right"));
-            BigBananaAppState.KEYBOARD_MOVE_LEFT = getKeyboardInput("keyboard.move.left", peel.getDefaultKeyBind("keyboard.move.left"));
+            BigBananaAppState.KEYBOARD_MOVE_UP = getKeyboardInput("move.up", peel.getDefaultKeyBind("move.up"));
+            BigBananaAppState.KEYBOARD_MOVE_DOWN = getKeyboardInput("move.down", peel.getDefaultKeyBind("move.down"));
+            BigBananaAppState.KEYBOARD_MOVE_RIGHT = getKeyboardInput("move.right", peel.getDefaultKeyBind("move.right"));
+            BigBananaAppState.KEYBOARD_MOVE_LEFT = getKeyboardInput("move.left", peel.getDefaultKeyBind("move.left"));
 
             BIGBANANA_KEYBOARD = new int[BBBindings.getKeySize()];
             BIGBANANA_BUTTON = new Button[BBBindings.getPadSize()];
@@ -94,8 +91,7 @@ public class BigBananaAppState extends BaseAppState implements StateFunctionList
             }
             for (int i = 0; i < BBBindings.getPadSize(); i++) {
                 String action = BBBindings.padbbmapping.get(i);
-                BIGBANANA_BUTTON[i] = null;
-                getButtonInput(action, peel.getDefaultPadBind(action));
+                BIGBANANA_BUTTON[i] = getButtonInput(action, peel.getDefaultPadBind(action));
             }
         } catch (Exception e) {
             e.printStackTrace();

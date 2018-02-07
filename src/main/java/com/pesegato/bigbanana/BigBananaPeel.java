@@ -6,11 +6,15 @@
 package com.pesegato.bigbanana;
 
 
+import java.util.Properties;
+
 /**
  * @author Pesegato
  */
 public interface BigBananaPeel {
 
+    public String getFilePath();
+    public Properties getProperties();
     public String getDefaultKeyBind(String key);
     public String getDefaultPadBind(String key);
 

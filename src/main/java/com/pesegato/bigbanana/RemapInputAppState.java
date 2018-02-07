@@ -5,25 +5,20 @@
  */
 package com.pesegato.bigbanana;
 
-import com.google.common.base.CaseFormat;
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.BaseAppState;
 import com.jme3.input.KeyNames;
-import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
-
-import static com.pesegato.bigbanana.BigBananaAppState.defPath;
-
 import com.simsilica.lemur.*;
 
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.lang.reflect.Field;
-import java.util.HashMap;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -35,7 +30,7 @@ public class RemapInputAppState extends BaseAppState {
     private Container mainWindow;
     private Container mainWindow2;
 
-    HashMap<ActionButton, String> mappings = new HashMap<>();
+    HashMap<ActionButton, BBBind> mappings = new HashMap<>();
     HashMap<String, ActionButton> mappings2 = new HashMap<>();
 
     ActionButton selected = null;
@@ -52,18 +47,18 @@ public class RemapInputAppState extends BaseAppState {
 
         Label title = mainWindow.addChild(new Label("Remap input key"));
         title.setFontSize(24);
-        addKeyboardButton("keyboard.move.up");
-        addKeyboardButton("keyboard.move.down");
-        addKeyboardButton("keyboard.move.right");
-        addKeyboardButton("keyboard.move.left");
+        addKeyboardButton(new BBBind("move.up", "keyboard.", true));
+        addKeyboardButton(new BBBind("move.down", "keyboard.", true));
+        addKeyboardButton(new BBBind("move.right", "keyboard.", true));
+        addKeyboardButton(new BBBind("move.left", "keyboard.", true));
         for (int i = 0; i < BBBindings.getKeySize(); i++) {
-            addKeyboardButton("bigbanana.keyboard." + i);
+            addKeyboardButton(new BBBind("bigbanana.keyboard." + i, "keyboard.", false));
         }
 
         Label title2 = mainWindow2.addChild(new Label("Remap input joy*/mouse"));
         title2.setFontSize(24);
         for (int i = 0; i < BBBindings.getPadSize(); i++) {
-            addButtonButton("bigbanana.pad." + i);
+            addButtonButton(new BBBind("bigbanana.pad." + i, "pad.", false));
         }
 
         // Calculate a standard scale and position from the app's camera
@@ -98,16 +93,16 @@ public class RemapInputAppState extends BaseAppState {
                 if (selected != null) {
 
                     try {
-                        String propKey = BBBindings.getMapping(mappings.get(selected));
+                        BBBind bind = mappings.get(selected);
                         if (name.startsWith("mouse_")) {
                             for (Field field : com.simsilica.lemur.input.Button.class.getFields()) {
                                 com.simsilica.lemur.input.Button b = (com.simsilica.lemur.input.Button) field.get(null);
                                 if (b.getId().equals(name)) {
                                     System.out.println("pressed " + b.getName());
-                                    BigBananaAppState.props.setProperty("pad." + propKey, b.getName());
+                                    getState(BigBananaAppState.class).peel.getProperties().setProperty(bind.propertyKey, b.getName());
                                     saveProps();
                                     selected.setText(
-                                            propKey + ": "
+                                            bind.name + ": "
                                                     + //name = "22"
                                                     //KeyNames.getName(Integer.parseInt(name)) = "Backspace"
                                                     b.getName()
@@ -120,12 +115,12 @@ public class RemapInputAppState extends BaseAppState {
                         }
                         int keykey = Integer.parseInt(name);
                         String userFriendlyName = KeyNames.getName(keykey);
-                        System.out.println(propKey + " / " + keykey + " / " + userFriendlyName);
+                        System.out.println(bind.name + " / " + keykey + " / " + userFriendlyName);
 
-                        BigBananaAppState.props.setProperty("keyboard." + propKey, userFriendlyName);
+                        getState(BigBananaAppState.class).peel.getProperties().setProperty(bind.propertyKey, userFriendlyName);
                         saveProps();
                         selected.setText(
-                                propKey + ": "
+                                bind.name + ": "
                                         + //name = "22"
                                         //KeyNames.getName(Integer.parseInt(name)) = "Backspace"
                                         userFriendlyName
@@ -140,7 +135,15 @@ public class RemapInputAppState extends BaseAppState {
     };
 
     public void saveProps() throws Exception {
-        BigBananaAppState.props.store(new FileOutputStream(defPath + "mapping" + ".properties"), "autogenerated");
+        Properties prop = getState(BigBananaAppState.class).peel.getProperties();
+        Properties tmp = new Properties() {
+            @Override
+            public synchronized Enumeration<Object> keys() {
+                return Collections.enumeration(new TreeSet<Object>(super.keySet()));
+            }
+        };
+        tmp.putAll(prop);
+        tmp.store(new FileWriter(getState(BigBananaAppState.class).peel.getFilePath()), "autogenerated");
     }
 
     private void setSelectedButton(ActionButton ab) {
@@ -149,7 +152,7 @@ public class RemapInputAppState extends BaseAppState {
             return;
         }
         selected = ab;
-        selected.setText(BBBindings.getMapping(mappings.get(ab)) + " ...");
+        selected.setText(mappings.get(ab).name + ": ...");
     }
 
     public void KeyboardMoveUp() {
@@ -288,30 +291,24 @@ public class RemapInputAppState extends BaseAppState {
         setSelectedButton(mappings2.get("bigbanana.pad.9"));
     }
 
-    private ActionButton addKeyboardButton(String key) {
-        System.out.println(key + "-" + BBBindings.getMapping(key));
-        String bbkey = BBBindings.getMapping(key);
-        String camelCase = CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, key.replace('.', '_'));
-        ActionButton action = mainWindow.addChild(new ActionButton(new CallMethodAction(getMapping(bbkey), this, camelCase)));
+    private ActionButton addKeyboardButton(BBBind key) {
+        ActionButton action = mainWindow.addChild(new ActionButton(new CallMethodAction(getMapping(key), this, key.reflect)));
         mappings.put(action, key);
-        mappings2.put(key, action);
+        mappings2.put(key.internalName, action);
         return action;
     }
 
-    private ActionButton addButtonButton(String key) {
-        System.out.println(key + "-" + BBBindings.getMapping(key));
-        String bbkey = BBBindings.getMapping(key);
-        String camelCase = CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, key.replace('.', '_'));
-        ActionButton action = mainWindow2.addChild(new ActionButton(new CallMethodAction(getMapping(bbkey), this, camelCase)));
+    private ActionButton addButtonButton(BBBind key) {
+        ActionButton action = mainWindow2.addChild(new ActionButton(new CallMethodAction(getMapping(key), this, key.reflect)));
         mappings.put(action, key);
-        mappings2.put(key, action);
+        mappings2.put(key.internalName, action);
         return action;
     }
 
-    private String getMapping(String key) {
+    private String getMapping(BBBind key) {
         try {
-            return key + ": "
-                    + BigBananaAppState.props.get(key) //KeyNames.getName(KeyNames.getIndex((String) BigBananaAppState.props.get(key))) //KeyNames.getIndex((String)BigBananaAppState.props.get(key))
+            return key.name + ": "
+                    + getState(BigBananaAppState.class).peel.getProperties().get(key.propertyKey) //KeyNames.getName(KeyNames.getIndex((String) BigBananaAppState.props.get(key))) //KeyNames.getIndex((String)BigBananaAppState.props.get(key))
                     ;
         } catch (Exception ex) {
             Logger.getLogger(RemapInputAppState.class.getName()).log(Level.SEVERE, null, ex);
