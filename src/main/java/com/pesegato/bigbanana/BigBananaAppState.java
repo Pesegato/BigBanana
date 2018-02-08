@@ -24,9 +24,6 @@ import static com.simsilica.lemur.focus.FocusNavigationFunctions.*;
 public class BigBananaAppState extends BaseAppState implements StateFunctionListener {
 
     static Logger log = LoggerFactory.getLogger(BigBananaAppState.class);
-    public static boolean COOKED_BUILD;
-    public static String BUILD_REVISION;
-    public static String BUILD_DATE;
 
     public static final FunctionId F_RED_B = new FunctionId(UI_NAV, "Red B");
 
