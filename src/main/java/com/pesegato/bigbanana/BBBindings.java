@@ -5,6 +5,8 @@
  */
 package com.pesegato.bigbanana;
 
+import com.simsilica.lemur.input.Button;
+
 import static com.pesegato.bigbanana.BigBananaAppState.*;
 
 import java.util.ArrayList;
@@ -60,5 +62,13 @@ public class BBBindings {
             return BIGBANANA_KEYBOARD[idx];
         }
         return -1;
+    }
+
+    public static Button getP(String key) {
+        int idx = padbbmapping.indexOf(key);
+        if (idx > -1) {
+            return BIGBANANA_BUTTON[idx];
+        }
+        return null;
     }
 }
