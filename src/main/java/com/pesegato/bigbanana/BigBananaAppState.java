@@ -25,6 +25,11 @@ public class BigBananaAppState extends BaseAppState implements StateFunctionList
 
     static Logger log = LoggerFactory.getLogger(BigBananaAppState.class);
 
+    public static final String BB_MOVEUP="move.up";
+    public static final String BB_MOVEDOWN="move.down";
+    public static final String BB_MOVERIGHT="move.right";
+    public static final String BB_MOVELEFT="move.left";
+
     public static final FunctionId F_RED_B = new FunctionId(UI_NAV, "Red B");
 
     public static Axis PAD_MOVE_VERTICAL;
@@ -75,10 +80,10 @@ public class BigBananaAppState extends BaseAppState implements StateFunctionList
     @Override
     protected void initialize(Application app) {
         try {
-            BigBananaAppState.KEYBOARD_MOVE_UP = getKeyboardInput("move.up", peel.getDefaultKeyBind("move.up"));
-            BigBananaAppState.KEYBOARD_MOVE_DOWN = getKeyboardInput("move.down", peel.getDefaultKeyBind("move.down"));
-            BigBananaAppState.KEYBOARD_MOVE_RIGHT = getKeyboardInput("move.right", peel.getDefaultKeyBind("move.right"));
-            BigBananaAppState.KEYBOARD_MOVE_LEFT = getKeyboardInput("move.left", peel.getDefaultKeyBind("move.left"));
+            BigBananaAppState.KEYBOARD_MOVE_UP = getKeyboardInput(BB_MOVEUP, peel.getDefaultKeyBind(BB_MOVEUP));
+            BigBananaAppState.KEYBOARD_MOVE_DOWN = getKeyboardInput(BB_MOVEDOWN, peel.getDefaultKeyBind(BB_MOVEDOWN));
+            BigBananaAppState.KEYBOARD_MOVE_RIGHT = getKeyboardInput(BB_MOVERIGHT, peel.getDefaultKeyBind(BB_MOVERIGHT));
+            BigBananaAppState.KEYBOARD_MOVE_LEFT = getKeyboardInput(BB_MOVELEFT, peel.getDefaultKeyBind(BB_MOVELEFT));
 
             BIGBANANA_KEYBOARD = new int[BBBindings.getKeySize()];
             BIGBANANA_BUTTON = new Button[BBBindings.getPadSize()];
