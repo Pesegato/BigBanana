@@ -34,7 +34,6 @@ public class BBBindings {
      * @param name the binding
      */
     public static void addKeyMapping(String name) {
-        //new BBBind(name, "keyboard.");
         keybbmapping.add(name);
     }
 
@@ -52,7 +51,14 @@ public class BBBindings {
             int idx = Integer.parseInt(key.substring(14));
             return padbbmapping.get(idx);
         }
-        return "keyboard."+key;
+        return "keyboard." + key;
     }
 
+    public static int getK(String key) {
+        int idx = keybbmapping.indexOf(key);
+        if (idx > -1) {
+            return BIGBANANA_KEYBOARD[idx];
+        }
+        return -1;
+    }
 }
