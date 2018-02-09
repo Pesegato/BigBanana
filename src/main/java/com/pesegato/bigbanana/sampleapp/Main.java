@@ -16,10 +16,12 @@ import java.util.Properties;
 public class Main extends SimpleApplication implements BigBananaPeel {
 
     public static final String MY_COOL_ACTION = "my.cool.action";
+    public static final String ANOTHER_ACTION = "another.action";
 
     public static void main(String[] args) {
         BBBindings.addKeyMapping(MY_COOL_ACTION);
         BBBindings.addPadMapping(MY_COOL_ACTION);
+        BBBindings.addPadMapping(ANOTHER_ACTION);
         Main app = new Main();
         app.setShowSettings(false);
         AppSettings settings = new AppSettings(true);

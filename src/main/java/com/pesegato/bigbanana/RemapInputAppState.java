@@ -22,6 +22,8 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static com.pesegato.bigbanana.BigBananaAppState.*;
+
 /**
  * @author Pesegato
  */
@@ -47,10 +49,10 @@ public class RemapInputAppState extends BaseAppState {
 
         Label title = mainWindow.addChild(new Label("Remap input key"));
         title.setFontSize(24);
-        addKeyboardButton(new BBBind("move.up", "keyboard.", true));
-        addKeyboardButton(new BBBind("move.down", "keyboard.", true));
-        addKeyboardButton(new BBBind("move.right", "keyboard.", true));
-        addKeyboardButton(new BBBind("move.left", "keyboard.", true));
+        addKeyboardButton(new BBBind(BB_MOVEUP, "keyboard.", true));
+        addKeyboardButton(new BBBind(BB_MOVEDOWN, "keyboard.", true));
+        addKeyboardButton(new BBBind(BB_MOVERIGHT, "keyboard.", true));
+        addKeyboardButton(new BBBind(BB_MOVELEFT, "keyboard.", true));
         for (int i = 0; i < BBBindings.getKeySize(); i++) {
             addKeyboardButton(new BBBind("bigbanana.keyboard." + i, "keyboard.", false));
         }
