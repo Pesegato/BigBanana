@@ -42,7 +42,7 @@ public class Main extends SimpleApplication implements BigBananaPeel {
         }
         getStateManager().attachAll(
                 new BigBananaAppState(this),
-                new RemapInputAppState());
+                new MainMenuAppState());
     }
 
     Properties prop = new Properties();
