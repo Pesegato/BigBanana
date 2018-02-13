@@ -25,10 +25,10 @@ public class BigBananaAppState extends BaseAppState implements StateFunctionList
 
     static Logger log = LoggerFactory.getLogger(BigBananaAppState.class);
 
-    public static final String BB_MOVEUP="move.up";
-    public static final String BB_MOVEDOWN="move.down";
-    public static final String BB_MOVERIGHT="move.right";
-    public static final String BB_MOVELEFT="move.left";
+    public static final String BB_MOVEUP = "move.up";
+    public static final String BB_MOVEDOWN = "move.down";
+    public static final String BB_MOVERIGHT = "move.right";
+    public static final String BB_MOVELEFT = "move.left";
 
     public static final FunctionId F_RED_B = new FunctionId(UI_NAV, "Red B");
 
@@ -105,7 +105,7 @@ public class BigBananaAppState extends BaseAppState implements StateFunctionList
         inputMapper.map(F_Y_AXIS, InputState.Negative, PAD_MOVE_HORIZONTAL);
         inputMapper.map(F_Y_AXIS, KEYBOARD_MOVE_UP);
         inputMapper.map(F_Y_AXIS, InputState.Negative, KEYBOARD_MOVE_DOWN);
-        inputMapper.map(F_ACTIVATE, PAD_GREEN_A);
+        //inputMapper.map(F_ACTIVATE, PAD_GREEN_A);
     }
 
     @Override
@@ -124,7 +124,7 @@ public class BigBananaAppState extends BaseAppState implements StateFunctionList
 
     @Override
     public void valueChanged(FunctionId func, InputState value, double tpf) {
-        System.out.println("Pressed 'red b', 'cancel'");
+        //maybe this needs to be deleted
     }
 
 }
