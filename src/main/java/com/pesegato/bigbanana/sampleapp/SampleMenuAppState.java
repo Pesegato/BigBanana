@@ -2,15 +2,21 @@ package com.pesegato.bigbanana.sampleapp;
 
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
-import com.jme3.app.state.BaseAppState;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
+import com.pesegato.bigbanana.extra.BBStartable;
 import com.pesegato.bigbanana.RemapInputAppState;
+import com.pesegato.bigbanana.extra.StartGameAppState;
 import com.simsilica.lemur.*;
+import com.simsilica.state.CompositeAppState;
 
-public class MainMenuAppState extends BaseAppState {
+public class SampleMenuAppState extends CompositeAppState implements BBStartable {
 
     Container mainWindow;
+
+    public SampleMenuAppState(Class c) {
+        super(new StartGameAppState(c));
+    }
 
     public float getStandardScale() {
         int height = getApplication().getCamera().getHeight();
@@ -26,6 +32,7 @@ public class MainMenuAppState extends BaseAppState {
         mainWindow.addChild(new ActionButton(new CallMethodAction("Start fake game", this, "startGame")));
         mainWindow.addChild(new ActionButton(new CallMethodAction("Remap input", this, "remapInput")));
         mainWindow.addChild(new ActionButton(new CallMethodAction("Quit game", this, "quitGame")));
+        mainWindow.addChild(new Label("Press START to play (sort of...)"));
         // Calculate a standard scale and position from the app's camera
         // height
         int height = app.getCamera().getHeight();
@@ -63,6 +70,7 @@ public class MainMenuAppState extends BaseAppState {
 
     @Override
     protected void onEnable() {
+        super.onEnable();
         Node gui = ((SimpleApplication) getApplication()).getGuiNode();
         gui.attachChild(mainWindow);
         GuiGlobals.getInstance().requestFocus(mainWindow);
@@ -71,6 +79,7 @@ public class MainMenuAppState extends BaseAppState {
 
     @Override
     protected void onDisable() {
+        super.onDisable();
         mainWindow.removeFromParent();
     }
 }

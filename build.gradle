@@ -48,6 +48,7 @@ dependencies {
 	compile 'com.simsilica:lemur:1.10.1'
 	compile 'com.simsilica:lemur-proto:1.9.1'
 	compile 'com.simsilica:lemur-props:1.0.1'
+	compile 'com.simsilica:sio2:1.1.0'
 	compile 'com.google.guava:guava:19.0'
 	compile 'net.java.dev.jna:jna:4.2.2'
 	compile 'net.java.dev.jna:jna-platform:4.2.2'
