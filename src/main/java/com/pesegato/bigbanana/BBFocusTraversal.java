@@ -27,9 +27,9 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
         focusMap = new Spatial[width][height];
     }
 
-    public void addFocusable(Spatial target, int x, int y, int width, int height) {
-        for (int i = x; i < x + width; i++) {
-            for (int j = y; j < y + height; j++) {
+    public void addFocusable(Spatial target, int row, int column, int width, int height) {
+        for (int i = row; i < row + height; i++) {
+            for (int j = column; j < column + width; j++) {
                 focusMap[i][j] = target;
             }
         }
@@ -43,15 +43,37 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
     @Override
     public Spatial getRelativeFocus(Spatial sptl, FocusTraversal.TraversalDirection td) {
         switch (td) {
+            case Up:
+                focusPointerY = goUp(sptl, focusPointerY);
+                break;
             case Right:
                 focusPointerX = goRight(sptl, focusPointerX);
                 break;
             case Left:
                 focusPointerX = goLeft(sptl, focusPointerX);
                 break;
+            case Down:
+                focusPointerY = goDown(sptl, focusPointerY);
+                break;
         }
         System.out.println("focus on " + focusPointerX + " " + focusPointerY);
         return focusMap[focusPointerY][focusPointerX];
+    }
+
+    int goUp(Spatial sptl, int index) {
+        if (index == 0) {
+            return 0;
+        }
+        Spatial s = focusMap[index - 1][focusPointerX];
+        if (s == null) {
+            return focusPointerY;
+        }
+        if (s.getControl(BBFocusTarget.class).isFocusable()
+                && sptl != s) {
+            return index - 1;
+        }
+        return goLeft(sptl, index - 1);
+
     }
 
     int goRight(Spatial sptl, int index) {
@@ -85,6 +107,22 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
             return index - 1;
         }
         return goLeft(sptl, index - 1);
+
+    }
+
+    int goDown(Spatial sptl, int index) {
+        if (index > focusMap.length) {
+            return focusPointerX;
+        }
+        Spatial s = focusMap[index + 1][focusPointerX];
+        if (s == null) {
+            return focusPointerY;
+        }
+        if (s.getControl(BBFocusTarget.class).isFocusable()
+                && sptl != s) {
+            return index + 1;
+        }
+        return goDown(sptl, index + 1);
 
     }
 
