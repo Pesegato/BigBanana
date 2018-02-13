@@ -13,9 +13,9 @@ import java.util.Properties;
  */
 public interface BigBananaPeel {
 
-    public String getFilePath();
-    public Properties getProperties();
-    public String getDefaultKeyBind(String key);
-    public String getDefaultPadBind(String key);
+    String getFilePath();
+    Properties getProperties();
+    String getDefaultKeyBind(String key);
+    String getDefaultPadBind(String key);
 
 }

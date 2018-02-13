@@ -2,10 +2,7 @@ package com.pesegato.bigbanana.sampleapp;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.system.AppSettings;
-import com.pesegato.bigbanana.BBBindings;
-import com.pesegato.bigbanana.BigBananaAppState;
-import com.pesegato.bigbanana.BigBananaPeel;
-import com.pesegato.bigbanana.RemapInputAppState;
+import com.pesegato.bigbanana.*;
 import com.simsilica.lemur.GuiGlobals;
 
 import java.io.FileReader;
@@ -42,7 +39,7 @@ public class Main extends SimpleApplication implements BigBananaPeel {
         }
         getStateManager().attachAll(
                 new BigBananaAppState(this),
-                new MainMenuAppState());
+                new SampleMenuAppState(SampleMenuAppState.class));
     }
 
     Properties prop = new Properties();
