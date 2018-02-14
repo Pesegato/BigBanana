@@ -27,6 +27,10 @@ Finally, on your application you can map ingame functions to the remapped action
 
     inputMapper.map(F_COOLACTION, BBBindings.getK(MY_COOL_ACTION));
 
+If you want to add the pad counterpart:
+
+    inputMapper.map(F_COOLACTION, BBBindings.getP(MY_COOL_ACTION));
+
 ## Remap input appstate
 
 Just attach the `RemapInputAppState` to show a user friendly gui that allows the user to remap all your custom action. You might want to change the visuals, but that is left as an exercise for the reader.
