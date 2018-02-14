@@ -2,15 +2,13 @@ package com.pesegato.bigbanana.extra;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
-import com.jme3.input.KeyInput;
 import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.input.*;
 
+import static com.pesegato.bigbanana.extra.BigBananaFunctions.*;
+
 public class StartGameAppState extends BaseAppState implements StateFunctionListener {
 
-    public static final String GROUP_BIGBANANA = "group bigbanana";
-
-    public static final FunctionId F_START = new FunctionId(GROUP_BIGBANANA, "start game");
     InputMapper inputMapper;
     private Class startable = null;
 
@@ -21,9 +19,9 @@ public class StartGameAppState extends BaseAppState implements StateFunctionList
     @Override
     protected void initialize(Application app) {
         inputMapper = GuiGlobals.getInstance().getInputMapper();
-        inputMapper.map(F_START, Button.JOYSTICK_START);
-        inputMapper.map(F_START, KeyInput.KEY_K);
-        inputMapper.addStateListener(this, F_START);
+        BigBananaFunctions.initializeDefaultMappings(inputMapper);
+        //moved to onEnable
+        //inputMapper.addStateListener(this, F_START);
     }
 
     @Override
@@ -32,12 +30,14 @@ public class StartGameAppState extends BaseAppState implements StateFunctionList
 
     @Override
     protected void onEnable() {
+        inputMapper.addStateListener(this, F_START);
         GuiGlobals.getInstance().getInputMapper().activateGroup(GROUP_BIGBANANA);
     }
 
     @Override
     protected void onDisable() {
-        GuiGlobals.getInstance().getInputMapper().deactivateGroup(GROUP_BIGBANANA);
+        inputMapper.removeStateListener(this, F_START);
+        //GuiGlobals.getInstance().getInputMapper().deactivateGroup(GROUP_BIGBANANA);
     }
 
     @Override
