@@ -5,6 +5,7 @@ This library provide input utilities built on top of [Lemur](https://github.com/
 * configurable input bindings by means of a Property file (which can also be used for other user settings)
 * remap input appstate
 * 4-way navigation
+* extra stuff
 * sample app
 
 ## Configurable input bindings
@@ -52,6 +53,12 @@ Please note that adding a spatial to the virtual table do NOT automatically atta
 Also don't forget to request focus for the first focusable item:
 
         GuiGlobals.getInstance().requestFocus(mySpatial);
+
+## Extra stuff
+
+BigBananaFunctions.initializeDefaultMappings adds some useful pad input: start, back and select; grouped together.
+When using these and switching between appstates, you should `addStateListener` and `removeStateListener` instead of `activateGroup` and `deactivateGroup`, otherwise the input event might be received by the wrong appstate!
+There's also a StartGameAppState that provides a "Press START to play" functionality.
 
 ## Sample app
 
