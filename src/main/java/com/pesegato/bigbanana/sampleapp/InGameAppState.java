@@ -4,6 +4,7 @@ import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.BaseAppState;
 import com.jme3.scene.Node;
+import com.pesegato.bigbanana.BBBindings;
 import com.pesegato.bigbanana.BBFocusTraversal;
 import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.input.FunctionId;
@@ -12,11 +13,16 @@ import com.simsilica.lemur.input.InputState;
 import com.simsilica.lemur.input.StateFunctionListener;
 
 import static com.pesegato.bigbanana.extra.BigBananaFunctions.F_BACK;
+import static com.pesegato.bigbanana.sampleapp.Main.MY_COOL_ACTION;
 
 public class InGameAppState extends BaseAppState implements StateFunctionListener {
 
+    public static final String GROUP_SAMPLE = "group sample";
+
+    public static final FunctionId F_COOLACTION = new FunctionId(GROUP_SAMPLE, "cool action");
+
     InputMapper inputMapper;
-    Node stateGuiNode=new Node();
+    Node stateGuiNode = new Node();
 
     @Override
     protected void initialize(Application app) {
@@ -40,6 +46,8 @@ public class InGameAppState extends BaseAppState implements StateFunctionListene
 
         inputMapper = GuiGlobals.getInstance().getInputMapper();
         //BigBananaFunctions.initializeDefaultMappings(inputMapper);
+        inputMapper.map(F_COOLACTION, BBBindings.getK(MY_COOL_ACTION));
+        inputMapper.addStateListener(this, F_COOLACTION);
 
     }
 
@@ -51,6 +59,7 @@ public class InGameAppState extends BaseAppState implements StateFunctionListene
     @Override
     protected void onEnable() {
         inputMapper.addStateListener(this, F_BACK);
+        GuiGlobals.getInstance().getInputMapper().activateGroup(GROUP_SAMPLE);
         //GuiGlobals.getInstance().getInputMapper().activateGroup(GROUP_BIGBANANA);
         ((SimpleApplication) getApplication()).getGuiNode().attachChild(stateGuiNode);
     }
@@ -58,16 +67,24 @@ public class InGameAppState extends BaseAppState implements StateFunctionListene
     @Override
     protected void onDisable() {
         inputMapper.removeStateListener(this, F_BACK);
+        GuiGlobals.getInstance().getInputMapper().deactivateGroup(GROUP_SAMPLE);
         //GuiGlobals.getInstance().getInputMapper().deactivateGroup(GROUP_BIGBANANA);
         stateGuiNode.removeFromParent();
     }
 
     @Override
     public void valueChanged(FunctionId func, InputState value, double tpf) {
-        if (value.equals(InputState.Off)) {
-            System.out.println("Pressed " + func);
-            setEnabled(false);
-            getState(SampleMenuAppState.class).setEnabled(true);
+        if (func.equals(F_COOLACTION)) {
+            if (value.equals(InputState.Off)) {
+                System.out.println("Wow, cool action!");
+            }
+        }
+        if (func.equals(F_BACK)) {
+            if (value.equals(InputState.Off)) {
+                System.out.println("Pressed " + func);
+                setEnabled(false);
+                getState(SampleMenuAppState.class).setEnabled(true);
+            }
         }
     }
 }
