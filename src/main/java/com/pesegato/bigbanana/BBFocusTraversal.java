@@ -12,7 +12,6 @@ import com.jme3.scene.control.AbstractControl;
 import com.simsilica.lemur.focus.FocusTraversal;
 
 /**
- *
  * @author Pesegato
  */
 public class BBFocusTraversal extends AbstractControl implements FocusTraversal {
@@ -68,7 +67,12 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
         if (s == null) {
             return focusPointerY;
         }
-        if (s.getControl(BBFocusTarget.class).isFocusable()
+        BBFocusTarget bbt = s.getControl(BBFocusTarget.class);
+        if (bbt == null) {
+            System.out.println("Component at " + (index - 1) + " " + focusPointerX + " don't have a BBFocusTarget Control");
+            return focusPointerY;
+        }
+        if (bbt.isFocusable()
                 && sptl != s) {
             return index - 1;
         }
@@ -85,7 +89,12 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
         if (s == null) {
             return focusPointerX;
         }
-        if (s.getControl(BBFocusTarget.class).isFocusable()
+        BBFocusTarget bbt = s.getControl(BBFocusTarget.class);
+        if (bbt == null) {
+            System.out.println("Component at " + focusPointerY + " " + (index + 1) + " don't have a BBFocusTarget Control");
+            return focusPointerY;
+        }
+        if (bbt.isFocusable()
                 && sptl != s) {
             return index + 1;
         }
@@ -102,7 +111,12 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
         if (s == null) {
             return focusPointerX;
         }
-        if (s.getControl(BBFocusTarget.class).isFocusable()
+        BBFocusTarget bbt = s.getControl(BBFocusTarget.class);
+        if (bbt == null) {
+            System.out.println("Component at " + focusPointerY + " " + (index - 1) + " don't have a BBFocusTarget Control");
+            return focusPointerY;
+        }
+        if (bbt.isFocusable()
                 && sptl != s) {
             return index - 1;
         }
@@ -118,7 +132,12 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
         if (s == null) {
             return focusPointerY;
         }
-        if (s.getControl(BBFocusTarget.class).isFocusable()
+        BBFocusTarget bbt = s.getControl(BBFocusTarget.class);
+        if (bbt == null) {
+            System.out.println("Component at " + (index + 1) + " " + focusPointerX + " don't have a BBFocusTarget Control");
+            return focusPointerY;
+        }
+        if (bbt.isFocusable()
                 && sptl != s) {
             return index + 1;
         }
