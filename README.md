@@ -45,7 +45,8 @@ You must add the `BBFocusTraversal` control to a spatial:
         BBFocusTraversal bbft = new BBFocusTraversal();
         myspatialonscreen.addControl(bbft);
 
-Then you must add each focusable item to the virtual square:
+Create a `Control` which implements `BBFocusTarget`. This is for getting visual feedback of the focus gained, lost etc.
+Then you must add this `Control` to each focusable and finally you must add each focusable item to the virtual square:
 
         addFocusable(Spatial target, int row, int column, int width, int height)
 
