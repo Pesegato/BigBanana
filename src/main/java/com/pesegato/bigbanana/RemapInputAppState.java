@@ -8,6 +8,8 @@ package com.pesegato.bigbanana;
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.BaseAppState;
+import com.jme3.input.Joystick;
+import com.jme3.input.JoystickButton;
 import com.jme3.input.KeyNames;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
@@ -62,6 +64,8 @@ public class RemapInputAppState extends BaseAppState {
         for (int i = 0; i < BBBindings.getPadSize(); i++) {
             addButtonButton(new BBBind("bigbanana.pad." + i, "pad.", false));
         }
+        Label joydescr = mainWindow2.addChild(new Label("..."));
+        joydescr.setFontSize(12);
 
         // Calculate a standard scale and position from the app's camera
         // height
@@ -87,6 +91,19 @@ public class RemapInputAppState extends BaseAppState {
             getApplication().getInputManager().addMapping("mouse_" + i, new MouseButtonTrigger(i - 1));
             getApplication().getInputManager().addListener(al, "mouse_" + i);
         }
+        Joystick joysticks[] = getApplication().getInputManager().getJoysticks();
+        if (joysticks.length > 0) {
+
+            //we use only joystick 1 for now!
+            Joystick joy = joysticks[0];
+            joydescr.setText("Using device: "+joy.getName());
+            for (JoystickButton jb : joy.getButtons()) {
+                jb.assignButton("joystick_" + (jb.getButtonId() + 1));
+                getApplication().getInputManager().addListener(al, "joystick_" + (jb.getButtonId() + 1));
+            }
+        } else {
+            joydescr.setText("No game controller detected");
+        }
     }
 
     ActionListener al = new ActionListener() {
@@ -97,6 +114,25 @@ public class RemapInputAppState extends BaseAppState {
                     try {
                         BBBind bind = mappings.get(selected);
                         if (name.startsWith("mouse_")) {
+                            for (Field field : com.simsilica.lemur.input.Button.class.getFields()) {
+                                com.simsilica.lemur.input.Button b = (com.simsilica.lemur.input.Button) field.get(null);
+                                if (b.getId().equals(name)) {
+                                    System.out.println("pressed " + b.getName());
+                                    getState(BigBananaAppState.class).peel.getProperties().setProperty(bind.propertyKey, b.getName());
+                                    saveProps();
+                                    selected.setText(
+                                            bind.name + ": "
+                                                    + //name = "22"
+                                                    //KeyNames.getName(Integer.parseInt(name)) = "Backspace"
+                                                    b.getName()
+                                    );
+                                    selected = null;
+                                    return;
+                                }
+                            }
+
+                        }
+                        if (name.startsWith("joystick_")) {
                             for (Field field : com.simsilica.lemur.input.Button.class.getFields()) {
                                 com.simsilica.lemur.input.Button b = (com.simsilica.lemur.input.Button) field.get(null);
                                 if (b.getId().equals(name)) {
