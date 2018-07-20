@@ -81,4 +81,14 @@ public class Main extends SimpleApplication implements BigBananaPeel {
         return null;
     }
 
+    @Override
+    public String getDefaultAxisBind(String key) {
+        switch (key) {
+            case BB_MOVE_HORIZONTAL:
+                return "Joystick (left) Left/Right";
+            case BB_MOVE_VERTICAL:
+                return "Joystick (left) Up/Down";
+        }
+        return null;
+    }
 }

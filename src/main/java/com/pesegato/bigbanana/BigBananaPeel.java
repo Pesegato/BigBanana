@@ -17,5 +17,6 @@ public interface BigBananaPeel {
     Properties getProperties();
     String getDefaultKeyBind(String key);
     String getDefaultPadBind(String key);
+    String getDefaultAxisBind(String key);
 
 }
