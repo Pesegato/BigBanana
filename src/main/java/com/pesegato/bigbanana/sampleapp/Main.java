@@ -4,10 +4,13 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.system.AppSettings;
 import com.pesegato.bigbanana.*;
 import com.simsilica.lemur.GuiGlobals;
+import com.simsilica.lemur.style.BaseStyles;
 
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
+
+import static com.pesegato.bigbanana.BigBananaAppState.*;
 
 
 public class Main extends SimpleApplication implements BigBananaPeel {
@@ -31,7 +34,7 @@ public class Main extends SimpleApplication implements BigBananaPeel {
     public void simpleInitApp() {
         GuiGlobals.initialize(this);
         GuiGlobals globals = GuiGlobals.getInstance();
-//        BaseStyles.loadGlassStyle();
+        BaseStyles.loadGlassStyle();
         globals.getStyles().setDefaultStyle("glass");
         try {
             prop.load(new FileReader(getFilePath()));
@@ -58,13 +61,13 @@ public class Main extends SimpleApplication implements BigBananaPeel {
     @Override
     public String getDefaultKeyBind(String key) {
         switch (key) {
-            case "move.up":
+            case BB_MOVEUP:
                 return "W";
-            case "move.down":
+            case BB_MOVEDOWN:
                 return "S";
-            case "move.right":
+            case BB_MOVERIGHT:
                 return "D";
-            case "move.left":
+            case BB_MOVELEFT:
                 return "A";
             case MY_COOL_ACTION:
                 return "P";
