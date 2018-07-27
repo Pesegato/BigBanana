@@ -9,6 +9,7 @@ import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.BaseAppState;
 import com.jme3.input.Joystick;
+import com.jme3.input.JoystickAxis;
 import com.jme3.input.JoystickButton;
 import com.jme3.input.KeyNames;
 import com.jme3.input.controls.ActionListener;
@@ -33,6 +34,7 @@ public class RemapInputAppState extends BaseAppState {
 
     private Container mainWindow;
     private Container mainWindow2;
+    private Container mainWindow3;
 
     HashMap<ActionButton, BBBind> mappings = new HashMap<>();
     HashMap<String, ActionButton> mappings2 = new HashMap<>();
@@ -48,6 +50,7 @@ public class RemapInputAppState extends BaseAppState {
     protected void initialize(Application app) {
         mainWindow = new Container();
         mainWindow2 = new Container();
+        mainWindow3 = new Container();
 
         Label title = mainWindow.addChild(new Label("Remap input key"));
         title.setFontSize(24);
@@ -64,6 +67,8 @@ public class RemapInputAppState extends BaseAppState {
         for (int i = 0; i < BBBindings.getPadSize(); i++) {
             addButtonButton(new BBBind("bigbanana.pad." + i, "pad.", false));
         }
+        addAxisButton(new BBBind("move.horizontal", "pad.", true));
+        addAxisButton(new BBBind("move.vertical", "pad.", true));
         Label joydescr = mainWindow2.addChild(new Label("..."));
         joydescr.setFontSize(12);
 
@@ -95,16 +100,24 @@ public class RemapInputAppState extends BaseAppState {
         if (joysticks.length > 0) {
 
             //we use only joystick 1 for now!
-            Joystick joy = joysticks[0];
-            joydescr.setText("Using device: "+joy.getName());
-            for (JoystickButton jb : joy.getButtons()) {
-                jb.assignButton("joystick_" + (jb.getButtonId() + 1));
-                getApplication().getInputManager().addListener(al, "joystick_" + (jb.getButtonId() + 1));
+            joystick = joysticks[0];
+            joydescr.setText("Using device: " + joystick.getName());
+            for (JoystickButton jb : joystick.getButtons()) {
+                System.out.println("Button " + jb.getName() + " - " + jb.getLogicalId() + " - " + jb.getButtonId());
+                jb.assignButton("joystick_" + (jb.getButtonId()));
+                getApplication().getInputManager().addListener(al, "joystick_" + (jb.getButtonId()));
+            }
+            for (JoystickAxis ja : joystick.getAxes()) {
+                ja.assignAxis("joy_axis_" + ja.getAxisId(), "joy_axis_" + ja.getAxisId());
+                System.out.println(ja.getName() + " - " + ja.getLogicalId() + " - " + ja.getAxisId());
+                getApplication().getInputManager().addListener(al, "joy_axis_" + ja.getAxisId());
             }
         } else {
             joydescr.setText("No game controller detected");
         }
     }
+
+    Joystick joystick;
 
     ActionListener al = new ActionListener() {
         public void onAction(String name, boolean keyPressed, float tpf) {
@@ -150,6 +163,21 @@ public class RemapInputAppState extends BaseAppState {
                                 }
                             }
 
+                        }
+                        if (name.startsWith("joy_axis_")) {
+                            int num = Integer.parseInt(name.substring(9));
+                            JoystickAxis axis = joystick.getAxes().get(num);
+                            System.out.println("pressed " + axis.getName());
+                            getState(BigBananaAppState.class).peel.getProperties().setProperty(bind.propertyKey, axis.getName());
+                            saveProps();
+                            selected.setText(
+                                    bind.name + ": "
+                                            + //name = "22"
+                                            //KeyNames.getName(Integer.parseInt(name)) = "Backspace"
+                                            axis.getName()
+                            );
+                            selected = null;
+                            return;
                         }
                         int keykey = Integer.parseInt(name);
                         String userFriendlyName = KeyNames.getName(keykey);
@@ -329,6 +357,14 @@ public class RemapInputAppState extends BaseAppState {
         setSelectedButton(mappings2.get("bigbanana.pad.9"));
     }
 
+    public void PadMoveHorizontal() {
+        setSelectedButton(mappings2.get("pad.move.horizontal"));
+    }
+
+    public void PadMoveVertical() {
+        setSelectedButton(mappings2.get("pad.move.vertical"));
+    }
+
     private ActionButton addKeyboardButton(BBBind key) {
         ActionButton action = mainWindow.addChild(new ActionButton(new CallMethodAction(getMapping(key), this, key.reflect)));
         mappings.put(action, key);
@@ -337,6 +373,13 @@ public class RemapInputAppState extends BaseAppState {
     }
 
     private ActionButton addButtonButton(BBBind key) {
+        ActionButton action = mainWindow2.addChild(new ActionButton(new CallMethodAction(getMapping(key), this, key.reflect)));
+        mappings.put(action, key);
+        mappings2.put(key.internalName, action);
+        return action;
+    }
+
+    private ActionButton addAxisButton(BBBind key) {
         ActionButton action = mainWindow2.addChild(new ActionButton(new CallMethodAction(getMapping(key), this, key.reflect)));
         mappings.put(action, key);
         mappings2.put(key.internalName, action);

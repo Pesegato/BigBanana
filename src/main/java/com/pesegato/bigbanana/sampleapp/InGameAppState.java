@@ -47,6 +47,7 @@ public class InGameAppState extends BaseAppState implements StateFunctionListene
         inputMapper = GuiGlobals.getInstance().getInputMapper();
         //BigBananaFunctions.initializeDefaultMappings(inputMapper);
         inputMapper.map(F_COOLACTION, BBBindings.getK(MY_COOL_ACTION));
+        inputMapper.map(F_COOLACTION, BBBindings.getP(MY_COOL_ACTION));
         inputMapper.addStateListener(this, F_COOLACTION);
 
     }

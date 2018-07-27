@@ -7,6 +7,8 @@ package com.pesegato.bigbanana;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
+import com.jme3.input.Joystick;
+import com.jme3.input.JoystickAxis;
 import com.jme3.input.KeyInput;
 import com.jme3.input.KeyNames;
 import com.simsilica.lemur.GuiGlobals;
@@ -29,6 +31,8 @@ public class BigBananaAppState extends BaseAppState {
     public static final String BB_MOVEDOWN = "move.down";
     public static final String BB_MOVERIGHT = "move.right";
     public static final String BB_MOVELEFT = "move.left";
+    public static final String BB_MOVE_HORIZONTAL = "move.horizontal";
+    public static final String BB_MOVE_VERTICAL = "move.vertical";
 
     public static Axis PAD_MOVE_VERTICAL;
     public static Axis PAD_MOVE_HORIZONTAL;
@@ -67,6 +71,21 @@ public class BigBananaAppState extends BaseAppState {
         return null;
     }
 
+    /*private Axis getAxisInput(String key, String deftl) throws IllegalAccessException {
+        String val = peel.getProperties().getProperty("pad." + key, deftl);
+        Joystick joysticks[] = getApplication().getInputManager().getJoysticks();
+        if (joysticks.length > 0) {
+
+            //we use only joystick 1 for now!
+            Joystick joystick = joysticks[0];
+            for (JoystickAxis axis : joystick.getAxes()) {
+                if (axis.getName().equals(val))
+                    return axis;
+            }
+        }
+        return null;
+    }*/
+
     @Override
     protected void initialize(Application app) {
         try {
@@ -74,6 +93,9 @@ public class BigBananaAppState extends BaseAppState {
             BigBananaAppState.KEYBOARD_MOVE_DOWN = getKeyboardInput(BB_MOVEDOWN, peel.getDefaultKeyBind(BB_MOVEDOWN));
             BigBananaAppState.KEYBOARD_MOVE_RIGHT = getKeyboardInput(BB_MOVERIGHT, peel.getDefaultKeyBind(BB_MOVERIGHT));
             BigBananaAppState.KEYBOARD_MOVE_LEFT = getKeyboardInput(BB_MOVELEFT, peel.getDefaultKeyBind(BB_MOVELEFT));
+
+            //BigBananaAppState.PAD_MOVE_VERTICAL = getAxisInput(BB_MOVE_VERTICAL, peel.getDefaultAxisBind(BB_MOVE_VERTICAL));
+            //BigBananaAppState.PAD_MOVE_HORIZONTAL = getAxisInput(BB_MOVE_HORIZONTAL, peel.getDefaultAxisBind(BB_MOVE_HORIZONTAL));
 
             BIGBANANA_KEYBOARD = new int[BBBindings.getKeySize()];
             BIGBANANA_BUTTON = new Button[BBBindings.getPadSize()];
