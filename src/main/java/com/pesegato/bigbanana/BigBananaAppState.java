@@ -108,6 +108,7 @@ public class BigBananaAppState extends BaseAppState {
                 BIGBANANA_BUTTON[i] = getButtonInput(action, peel.getDefaultPadBind(action));
             }
         } catch (Exception e) {
+            log.error(null, e);
             e.printStackTrace();
         }
         InputMapper inputMapper = GuiGlobals.getInstance().getInputMapper();
