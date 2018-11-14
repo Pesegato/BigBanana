@@ -9,6 +9,7 @@ import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.AbstractControl;
+import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.focus.FocusTraversal;
 
 /**
@@ -32,6 +33,12 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
                 focusMap[i][j] = target;
             }
         }
+    }
+
+    public void receiveFocus() {
+        focusPointerX = 0;
+        focusPointerY = 0;
+        GuiGlobals.getInstance().requestFocus(getDefaultFocus());
     }
 
     @Override
