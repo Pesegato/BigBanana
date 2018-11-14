@@ -48,7 +48,7 @@ You must add the `BBFocusTraversal` control to a spatial:
 Create a `Control` which implements `BBFocusTarget`. This is for getting visual feedback of the focus gained, lost etc.
 Then you must add this `Control` to each focusable and finally you must add each focusable item to the virtual square:
 
-        addFocusable(Spatial target, int row, int column, int width, int height)
+        bbft.addFocusable(Spatial target, int row, int column, int width, int height)
 
 Please note that adding a spatial to the virtual table do NOT automatically attach the spatial to a Node! You are simply adding navigation support.
 Also don't forget to request focus for the first focusable item:
