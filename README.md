@@ -53,7 +53,9 @@ Then you must add this `Control` to each focusable and finally you must add each
 Please note that adding a spatial to the virtual table do NOT automatically attach the spatial to a Node! You are simply adding navigation support.
 Also don't forget to request focus for the first focusable item:
 
-        GuiGlobals.getInstance().requestFocus(mySpatial);
+        bbft.receiveFocus();
+
+When navigating between pages, you probably want to use multiple `BBFocusTraversal` control, one for each page and call `receiveFocus` when focused.
 
 ## Extra stuff
 
