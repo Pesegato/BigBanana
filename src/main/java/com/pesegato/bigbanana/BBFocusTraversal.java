@@ -35,10 +35,16 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
         }
     }
 
-    public void receiveFocus() {
-        focusPointerX = 0;
-        focusPointerY = 0;
-        GuiGlobals.getInstance().requestFocus(getDefaultFocus());
+    public void receiveFocus(boolean resetFocus) {
+        if (resetFocus) {
+            focusPointerX = 0;
+            focusPointerY = 0;
+        }
+        GuiGlobals.getInstance().requestFocus(getCurrentFocus());
+    }
+
+    private Spatial getCurrentFocus() {
+        return focusMap[focusPointerY][focusPointerX];
     }
 
     @Override
