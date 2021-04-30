@@ -121,6 +121,8 @@ public class RemapInputAppState extends BaseAppState {
 
     ActionListener al = new ActionListener() {
         public void onAction(String name, boolean keyPressed, float tpf) {
+            if (name.equals("0"))
+                return;
             if (!keyPressed) {
                 if (selected != null) {
 
