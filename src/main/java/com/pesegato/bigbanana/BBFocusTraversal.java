@@ -43,6 +43,19 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
         GuiGlobals.getInstance().requestFocus(getCurrentFocus());
     }
 
+    public void setCurrentFocus(Spatial s) {
+        for (int i = 0; i < focusMap.length; i++) {
+            for (int j = 0; j < focusMap[i].length; i++) {
+                if (focusMap[i][j] == s) {
+                    focusPointerX = j;
+                    focusPointerY = i;
+                    System.out.println("focus now set on " + focusPointerX + " " + focusPointerY);
+                    return;
+                }
+            }
+        }
+    }
+
     private Spatial getCurrentFocus() {
         return focusMap[focusPointerY][focusPointerX];
     }
