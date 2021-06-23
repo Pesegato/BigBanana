@@ -1,35 +1,29 @@
+import org.gradle.api.publish.maven.MavenPublication
+
 plugins {
-	id "java"
-	id "maven"
+		id "java"
+		id "maven-publish"
 //  id "eclipse"
-//  id "idea"
-	id 'pl.allegro.tech.build.axion-release' version '1.4.0'
+		id "idea"
+		id 'com.palantir.git-version' version '0.12.3'
 }
 
-scmVersion {
-	tag {
-		prefix = 'bigbanana'
-	}
-}
+project.version gitVersion()
 
-project.version = scmVersion.version
-def fullversion = "git describe --always --dirty".execute().text.trim()
-println("version : '${project.version}/${fullversion}'")
+println("version : '${version}'")
 
 ext {
-	jvm = org.gradle.internal.jvm.Jvm.current()
-	javaVersion = JavaVersion.current()
-	isCiServer = System.getenv("TRAVIS") || System.getenv().containsKey("TEAMCITY_VERSION") || hasProperty('CI') || System.getenv("JITPACK")
-	isWindows = org.gradle.internal.os.OperatingSystem.current().windows
+		jvm = org.gradle.internal.jvm.Jvm.current()
+		javaVersion = JavaVersion.current()
+		isCiServer = System.getenv("TRAVIS") || System.getenv().containsKey("TEAMCITY_VERSION") || hasProperty('CI') || System.getenv("JITPACK")
+		isWindows = org.gradle.internal.os.OperatingSystem.current().windows
 }
 
-//name = the directory name
 group = "com.pesegato"
 
 repositories {
-	mavenLocal()
-	jcenter()
-	maven { url "https://jitpack.io" }
+		jcenter()
+		maven { url "https://jitpack.io" }
 }
 
 def jme3 = ["v": '3.2.1-stable', "g": "org.jmonkeyengine"]
@@ -42,24 +36,31 @@ if (isCiServer){
 */
 
 dependencies {
-	// jme
-	compile "${jme3.g}:jme3-core:${jme3.v}"
-	compile 'org.slf4j:slf4j-api:1.7.21'
-	compile 'com.simsilica:lemur:[1.13,)'
-	compile 'com.simsilica:lemur-proto:[1.9,)'
-	compile 'com.simsilica:lemur-props:[1.0,)'
-	compile 'com.simsilica:sio2:[1.1,)'
-	compile 'com.google.guava:guava:21.0'
-	compile 'net.java.dev.jna:jna:5.6.0'
-	compile 'net.java.dev.jna:jna-platform:5.6.0'
-	runtime 'ch.qos.logback:logback-classic:1.1.2'
-	runtime "${jme3.g}:jme3-lwjgl3:${jme3.v}"
+		// jme
+		implementation 'org.slf4j:slf4j-api:1.7.21'
+		implementation 'com.simsilica:lemur:[1.13,)'
+		implementation 'com.simsilica:lemur-proto:[1.9,)'
+		implementation 'com.simsilica:lemur-props:[1.0,)'
+		implementation 'com.simsilica:sio2:[1.1,)'
+		implementation 'com.google.guava:guava:21.0'
+		implementation 'net.java.dev.jna:jna:5.6.0'
+		implementation 'net.java.dev.jna:jna-platform:5.6.0'
+		implementation 'ch.qos.logback:logback-classic:1.1.2'
+		runtimeOnly "${jme3.g}:jme3-lwjgl3:${jme3.v}"
 
-	//utils
+		//utils
 
-	//assets
+		//assets
 
-	//test
+		//test
+}
+
+publishing {
+		publications {
+				mavenJava(MavenPublication) {
+						from components.java
+				}
+		}
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -67,24 +68,24 @@ targetCompatibility = JavaVersion.VERSION_1_8
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 compileJava.doLast {
-	def buildDate = new Date().format('yyyy-MM-dd HHmm')
-	println "Writing ${scmVersion.tag.prefix}.build.date: " + buildDate
-	new File(destinationDir, "${scmVersion.tag.prefix}.build.date").text = buildDate
-	new File(destinationDir, "${scmVersion.tag.prefix}.build.version").text = "${fullversion}"
+		def buildDate = new Date().format('yyyy-MM-dd HHmm')
+		println "Writing ${rootProject.name}.build.date: " + buildDate
+		new File(destinationDir, "${rootProject.name}.build.date").text = buildDate
+		new File(destinationDir, "${rootProject.name}.build.version").text = "${version}"
 }
 
 
 task sourcesJar(type: Jar, dependsOn: classes) {
-	classifier = 'sources'
-	from sourceSets.main.allSource
+		archiveClassifier.set("sources")
+		from sourceSets.main.allSource
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-	classifier = 'javadoc'
-	from javadoc.destinationDir
+		archiveClassifier.set("javadoc")
+		from javadoc.destinationDir
 }
 
 artifacts {
-	archives sourcesJar
-	archives javadocJar
+		archives sourcesJar
+		archives javadocJar
 }
