@@ -1,4 +1,4 @@
-# BigBanana Classic [![Build Status](https://travis-ci.org/Pesegato/BigBanana.svg?branch=master)](https://travis-ci.org/Pesegato/BigBanana) [![](https://jitpack.io/v/Pesegato/bigbanana.svg)](https://jitpack.io/#Pesegato/bigbanana)
+# BigBanana [![Build Status](https://travis-ci.org/Pesegato/BigBanana.svg?branch=master)](https://travis-ci.org/Pesegato/BigBanana) [![](https://jitpack.io/v/Pesegato/bigbanana.svg)](https://jitpack.io/#Pesegato/bigbanana)
 Mouseless (bananaful?) navigation for jme3 applications
 
 This library provide input utilities built on top of [Lemur](https://github.com/jMonkeyEngine-Contributions/Lemur), expecially useful when your game is played without the mouse and keyboard:
