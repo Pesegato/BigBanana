@@ -4,11 +4,10 @@ import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.BaseAppState;
 import com.jme3.scene.Node;
-import com.pesegato.bigbanana.BBBindings;
 import com.pesegato.bigbanana.BBFocusTraversal;
+import com.pesegato.bigbanana.BigBananaAppState;
 import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.input.FunctionId;
-import com.simsilica.lemur.input.InputMapper;
 import com.simsilica.lemur.input.InputState;
 import com.simsilica.lemur.input.StateFunctionListener;
 
@@ -21,7 +20,7 @@ public class InGameAppState extends BaseAppState implements StateFunctionListene
 
     public static final FunctionId F_COOLACTION = new FunctionId(GROUP_SAMPLE, "cool action");
 
-    InputMapper inputMapper;
+    BigBananaAppState bbas;
     Node stateGuiNode = new Node();
 
     @Override
@@ -44,11 +43,9 @@ public class InGameAppState extends BaseAppState implements StateFunctionListene
 
         GuiGlobals.getInstance().requestFocus(b[0][0].geo);
 
-        inputMapper = GuiGlobals.getInstance().getInputMapper();
         //BigBananaFunctions.initializeDefaultMappings(inputMapper);
-        inputMapper.map(F_COOLACTION, BBBindings.getK(MY_COOL_ACTION));
-        inputMapper.map(F_COOLACTION, BBBindings.getP(MY_COOL_ACTION));
-        inputMapper.addStateListener(this, F_COOLACTION);
+        bbas = getState(BigBananaAppState.class);
+        bbas.map(F_COOLACTION, MY_COOL_ACTION, this);
 
     }
 
@@ -59,16 +56,16 @@ public class InGameAppState extends BaseAppState implements StateFunctionListene
 
     @Override
     protected void onEnable() {
-        inputMapper.addStateListener(this, F_BACK);
-        GuiGlobals.getInstance().getInputMapper().activateGroup(GROUP_SAMPLE);
+        bbas.addStateListener(this, F_BACK);
+        bbas.activateGroup(GROUP_SAMPLE);
         //GuiGlobals.getInstance().getInputMapper().activateGroup(GROUP_BIGBANANA);
         ((SimpleApplication) getApplication()).getGuiNode().attachChild(stateGuiNode);
     }
 
     @Override
     protected void onDisable() {
-        inputMapper.removeStateListener(this, F_BACK);
-        GuiGlobals.getInstance().getInputMapper().deactivateGroup(GROUP_SAMPLE);
+        bbas.removeStateListener(this, F_BACK);
+        bbas.deactivateGroup(GROUP_SAMPLE);
         //GuiGlobals.getInstance().getInputMapper().deactivateGroup(GROUP_BIGBANANA);
         stateGuiNode.removeFromParent();
     }

@@ -76,14 +76,15 @@ public class Main extends SimpleApplication implements BigBananaPeel {
     }
 
     @Override
-    public String getDefaultPadBind(String key) {
+    public BBInput getDefaultPadBind(String key) {
         switch (key) {
             case MY_COOL_ACTION:
-                return "Mouse Button 1";
+                return BBInput.BB_BUTTON_X;
         }
         return null;
     }
 
+    /*
     @Override
     public String getDefaultAxisBind(String key) {
         switch (key) {
@@ -94,4 +95,5 @@ public class Main extends SimpleApplication implements BigBananaPeel {
         }
         return null;
     }
+    */
 }
