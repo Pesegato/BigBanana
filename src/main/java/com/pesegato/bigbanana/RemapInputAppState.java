@@ -62,7 +62,8 @@ public class RemapInputAppState extends BaseAppState {
             addKeyboardButton(new BBBind("bigbanana.keyboard." + i, "keyboard.", false));
         }
 
-        Label title2 = mainWindow2.addChild(new Label("Remap input joy*/mouse"));
+        /*
+        Label title2 = mainWindow2.addChild(new Label("Remap input mouse/joy*"));
         title2.setFontSize(24);
         for (int i = 0; i < BBBindings.getPadSize(); i++) {
             addButtonButton(new BBBind("bigbanana.pad." + i, "pad.", false));
@@ -71,6 +72,7 @@ public class RemapInputAppState extends BaseAppState {
         addAxisButton(new BBBind("move.vertical", "pad.", true));
         Label joydescr = mainWindow2.addChild(new Label("..."));
         joydescr.setFontSize(12);
+        */
 
         // Calculate a standard scale and position from the app's camera
         // height
@@ -96,6 +98,7 @@ public class RemapInputAppState extends BaseAppState {
             getApplication().getInputManager().addMapping("mouse_" + i, new MouseButtonTrigger(i - 1));
             getApplication().getInputManager().addListener(al, "mouse_" + i);
         }
+        /*
         Joystick joysticks[] = getApplication().getInputManager().getJoysticks();
         if (joysticks.length > 0) {
 
@@ -115,9 +118,10 @@ public class RemapInputAppState extends BaseAppState {
         } else {
             joydescr.setText("No game controller detected");
         }
+        */
     }
 
-    Joystick joystick;
+    //Joystick joystick;
 
     ActionListener al = new ActionListener() {
         public void onAction(String name, boolean keyPressed, float tpf) {
@@ -147,6 +151,7 @@ public class RemapInputAppState extends BaseAppState {
                             }
 
                         }
+                        /*
                         if (name.startsWith("joystick_")) {
                             for (Field field : com.simsilica.lemur.input.Button.class.getFields()) {
                                 com.simsilica.lemur.input.Button b = (com.simsilica.lemur.input.Button) field.get(null);
@@ -181,6 +186,7 @@ public class RemapInputAppState extends BaseAppState {
                             selected = null;
                             return;
                         }
+                         */
                         int keykey = Integer.parseInt(name);
                         String userFriendlyName = KeyNames.getName(keykey);
                         System.out.println(bind.name + " / " + keykey + " / " + userFriendlyName);
@@ -359,6 +365,7 @@ public class RemapInputAppState extends BaseAppState {
         setSelectedButton(mappings2.get("bigbanana.pad.9"));
     }
 
+    /*
     public void PadMoveHorizontal() {
         setSelectedButton(mappings2.get("pad.move.horizontal"));
     }
@@ -366,6 +373,7 @@ public class RemapInputAppState extends BaseAppState {
     public void PadMoveVertical() {
         setSelectedButton(mappings2.get("pad.move.vertical"));
     }
+     */
 
     private ActionButton addKeyboardButton(BBBind key) {
         ActionButton action = mainWindow.addChild(new ActionButton(new CallMethodAction(getMapping(key), this, key.reflect)));
@@ -381,12 +389,14 @@ public class RemapInputAppState extends BaseAppState {
         return action;
     }
 
+    /*
     private ActionButton addAxisButton(BBBind key) {
         ActionButton action = mainWindow2.addChild(new ActionButton(new CallMethodAction(getMapping(key), this, key.reflect)));
         mappings.put(action, key);
         mappings2.put(key.internalName, action);
         return action;
     }
+     */
 
     private String getMapping(BBBind key) {
         try {
