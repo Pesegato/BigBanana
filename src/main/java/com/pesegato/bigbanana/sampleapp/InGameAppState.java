@@ -3,22 +3,31 @@ package com.pesegato.bigbanana.sampleapp;
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.BaseAppState;
+import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
+import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.jme3.scene.shape.Quad;
 import com.pesegato.bigbanana.BBFocusTraversal;
 import com.pesegato.bigbanana.BigBananaAppState;
 import com.simsilica.lemur.GuiGlobals;
+import com.simsilica.lemur.input.AnalogFunctionListener;
 import com.simsilica.lemur.input.FunctionId;
 import com.simsilica.lemur.input.InputState;
 import com.simsilica.lemur.input.StateFunctionListener;
 
+import static com.pesegato.bigbanana.BigBananaAppState.LEFT_STICK_X;
+import static com.pesegato.bigbanana.BigBananaAppState.LEFT_STICK_Y;
 import static com.pesegato.bigbanana.extra.BigBananaFunctions.F_BACK;
 import static com.pesegato.bigbanana.sampleapp.Main.MY_COOL_ACTION;
 
-public class InGameAppState extends BaseAppState implements StateFunctionListener {
+public class InGameAppState extends BaseAppState implements StateFunctionListener, AnalogFunctionListener {
 
     public static final String GROUP_SAMPLE = "group sample";
 
     public static final FunctionId F_COOLACTION = new FunctionId(GROUP_SAMPLE, "cool action");
+
+    Geometry leftStick;
 
     BigBananaAppState bbas;
     Node stateGuiNode = new Node();
@@ -43,6 +52,13 @@ public class InGameAppState extends BaseAppState implements StateFunctionListene
 
         GuiGlobals.getInstance().requestFocus(b[0][0].geo);
 
+        leftStick = new Geometry("MyQuad", new Quad(10, 10));
+        Material m = new Material(app.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+        m.setColor("Color", ColorRGBA.Green);
+        leftStick.setMaterial(m);
+        leftStick.setLocalTranslation(400, 50, 0);
+        stateGuiNode.attachChild(leftStick);
+
         //BigBananaFunctions.initializeDefaultMappings(inputMapper);
         bbas = getState(BigBananaAppState.class);
         bbas.map(F_COOLACTION, MY_COOL_ACTION, this);
@@ -56,6 +72,9 @@ public class InGameAppState extends BaseAppState implements StateFunctionListene
 
     @Override
     protected void onEnable() {
+        bbas.mapLeftStickX(this);
+        bbas.mapLeftStickY(this);
+        bbas.setInvertLeftStickY(true);
         bbas.addStateListener(this, F_BACK);
         bbas.activateGroup(GROUP_SAMPLE);
         //GuiGlobals.getInstance().getInputMapper().activateGroup(GROUP_BIGBANANA);
@@ -64,6 +83,8 @@ public class InGameAppState extends BaseAppState implements StateFunctionListene
 
     @Override
     protected void onDisable() {
+        bbas.mapLeftStickX(null);
+        bbas.mapLeftStickY(null);
         bbas.removeStateListener(this, F_BACK);
         bbas.deactivateGroup(GROUP_SAMPLE);
         //GuiGlobals.getInstance().getInputMapper().deactivateGroup(GROUP_BIGBANANA);
@@ -84,5 +105,17 @@ public class InGameAppState extends BaseAppState implements StateFunctionListene
                 getState(SampleMenuAppState.class).setEnabled(true);
             }
         }
+    }
+
+    float valueX = 0;
+    float valueY = 0;
+
+    @Override
+    public void valueActive(FunctionId func, double value, double tpf) {
+        if (func.equals(LEFT_STICK_X))
+            valueX = (float) value;
+        if (func.equals(LEFT_STICK_Y))
+            valueY = (float) value;
+        leftStick.setLocalTranslation((float) (400 + valueX * 50), 50 + valueY * 50, 0);
     }
 }
