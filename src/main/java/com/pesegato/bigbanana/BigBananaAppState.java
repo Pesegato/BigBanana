@@ -10,10 +10,7 @@ import com.jme3.app.state.BaseAppState;
 import com.jme3.input.KeyInput;
 import com.jme3.input.KeyNames;
 import com.simsilica.lemur.GuiGlobals;
-import com.simsilica.lemur.input.FunctionId;
-import com.simsilica.lemur.input.InputMapper;
-import com.simsilica.lemur.input.InputState;
-import com.simsilica.lemur.input.StateFunctionListener;
+import com.simsilica.lemur.input.*;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWGamepadState;
 import org.slf4j.Logger;
@@ -42,9 +39,15 @@ public class BigBananaAppState extends BaseAppState {
     public static final String BB_MOVE_VERTICAL = "move.vertical";
 
     int prevstate[] = new int[15];
+    //float prevstateAxes[] = new float[5];
 
     //public static Axis PAD_MOVE_VERTICAL;
     //public static Axis PAD_MOVE_HORIZONTAL;
+    public static final FunctionId LEFT_STICK_X = new FunctionId("bb.left.stick.x");
+    public static final FunctionId LEFT_STICK_Y = new FunctionId("bb.left.stick.y");
+    public static final FunctionId RIGHT_STICK_X = new FunctionId("bb.right.stick.x");
+    public static final FunctionId RIGHT_STICK_Y = new FunctionId("bb.right.stick.y");
+
     public static int KEYBOARD_MOVE_UP;
     public static int KEYBOARD_MOVE_DOWN;
     public static int KEYBOARD_MOVE_RIGHT;
@@ -53,12 +56,16 @@ public class BigBananaAppState extends BaseAppState {
     public static int BIGBANANA_KEYBOARD[];
     public static BBInput BIGBANANA_BUTTON[];
 
-    HashMap<FunctionId, StateFunctionListener> listeners = new HashMap<>();
+    HashMap<FunctionId, StateFunctionListener> stateFunctionListeners = new HashMap<>();
+    HashMap<FunctionId, AnalogFunctionListener> analogFunctionListeners = new HashMap<>();
     HashMap<BBInput, FunctionId> glfwMap = new HashMap<>();
 
     InputMapper inputMapper;
     GLFWGamepadState state;
     BigBananaPeel peel;
+    boolean bananaful = false;
+    boolean invertLX;
+    boolean invertLY;
 
     public BigBananaAppState(BigBananaPeel peel) {
         this.peel = peel;
@@ -102,6 +109,35 @@ public class BigBananaAppState extends BaseAppState {
         return null;
     }*/
 
+    public void setInvertLeftStickX(boolean invertLX) {
+        this.invertLX = invertLX;
+    }
+
+    public void setInvertLeftStickY(boolean invertLY) {
+        this.invertLY = invertLY;
+    }
+
+    public void addAnalogListener(AnalogFunctionListener listener, FunctionId id) {
+        if (id == null) {
+            throw new RuntimeException("No function IDs specified.");
+        }
+        if (listener == null) {
+            analogFunctionListeners.remove(id);
+        }
+
+        analogFunctionListeners.put(id, listener);
+    }
+
+    public void removeAnalogListener(AnalogFunctionListener listener, FunctionId id) {
+        if (id == null) {
+            throw new RuntimeException("No function IDs specified.");
+        }
+        if (listener == null) {
+            throw new IllegalArgumentException("Listener cannot be null");
+        }
+
+        analogFunctionListeners.remove(id);
+    }
 
     public void addStateListener(StateFunctionListener listener, FunctionId id) {
         inputMapper.addStateListener(listener, id);
@@ -121,7 +157,7 @@ public class BigBananaAppState extends BaseAppState {
             throw new IllegalArgumentException("Listener cannot be null");
         }
 
-        listeners.put(id, l);
+        stateFunctionListeners.put(id, l);
     }
 
     private void removeStateListenerBB(StateFunctionListener l, FunctionId id) {
@@ -132,7 +168,7 @@ public class BigBananaAppState extends BaseAppState {
             throw new IllegalArgumentException("Listener cannot be null");
         }
 
-        listeners.remove(id);
+        stateFunctionListeners.remove(id);
     }
 
     public void activateGroup(String group) {
@@ -149,15 +185,52 @@ public class BigBananaAppState extends BaseAppState {
         glfwMap.put(BBBindings.getP(key), id);
     }
 
+    /**
+     * Map the listener. Set it to null to remove.
+     * @param listener
+     */
+
+    public void mapLeftStickX(AnalogFunctionListener listener) {
+        addAnalogListener(listener, LEFT_STICK_X);
+    }
+
+    /**
+     * Map the listener. Set it to null to remove.
+     * @param listener
+     */
+
+    public void mapLeftStickY(AnalogFunctionListener listener) {
+        addAnalogListener(listener, LEFT_STICK_Y);
+    }
+
+    /**
+     * Map the listener. Set it to null to remove.
+     * @param listener
+     */
+
+    public void mapRightStickX(AnalogFunctionListener listener) {
+        addAnalogListener(listener, RIGHT_STICK_X);
+    }
+
+    /**
+     * Map the listener. Set it to null to remove.
+     * @param listener
+     */
+
+    public void mapRightStickY(AnalogFunctionListener listener) {
+        addAnalogListener(listener, RIGHT_STICK_Y);
+    }
+
 
     @Override
     protected void initialize(Application app) {
         inputMapper = GuiGlobals.getInstance().getInputMapper();
         if (GLFW.glfwJoystickIsGamepad(GLFW_JOYSTICK_1)) {
             log.info("Gamepad 1 is present, entering real Bananaful mode");
+            bananaful = true;
         } else {
             log.info("No Gamepad present, entering Bananaless mode");
-            setEnabled(false);
+            bananaful = false;
         }
         state = new GLFWGamepadState(ByteBuffer.allocateDirect(128));
 
@@ -195,17 +268,23 @@ public class BigBananaAppState extends BaseAppState {
 
     public void update(float tpf) {
 
-        if (GLFW.glfwGetGamepadState(GLFW_JOYSTICK_1, state)) {
-            manageInput(state, GLFW_GAMEPAD_BUTTON_A, BB_BUTTON_A, tpf);
-            manageInput(state, GLFW_GAMEPAD_BUTTON_B, BB_BUTTON_B, tpf);
-            manageInput(state, GLFW_GAMEPAD_BUTTON_X, BB_BUTTON_X, tpf);
-            manageInput(state, GLFW_GAMEPAD_BUTTON_Y, BB_BUTTON_Y, tpf);
-            manageInput(state, GLFW_GAMEPAD_BUTTON_START, BB_BUTTON_START, tpf);
-            manageInput(state, GLFW_GAMEPAD_BUTTON_BACK, BB_BUTTON_BACK, tpf);
-            manageInput(state, GLFW_GAMEPAD_BUTTON_LEFT_BUMPER, BB_BUTTON_LBU, tpf);
-            manageInput(state, GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER, BB_BUTTON_RBU, tpf);
-            manageInput(state, GLFW_GAMEPAD_BUTTON_LEFT_THUMB, BB_BUTTON_LTH, tpf);
-            manageInput(state, GLFW_GAMEPAD_BUTTON_RIGHT_THUMB, BB_BUTTON_RTH, tpf);
+        if (bananaful) {
+
+            if (GLFW.glfwGetGamepadState(GLFW_JOYSTICK_1, state)) {
+
+                manageInput(state, GLFW_GAMEPAD_AXIS_LEFT_X, LEFT_STICK_X, invertLX, tpf);
+                manageInput(state, GLFW_GAMEPAD_AXIS_LEFT_Y, LEFT_STICK_Y, invertLY, tpf);
+
+                manageInput(state, GLFW_GAMEPAD_BUTTON_A, BB_BUTTON_A, tpf);
+                manageInput(state, GLFW_GAMEPAD_BUTTON_B, BB_BUTTON_B, tpf);
+                manageInput(state, GLFW_GAMEPAD_BUTTON_X, BB_BUTTON_X, tpf);
+                manageInput(state, GLFW_GAMEPAD_BUTTON_Y, BB_BUTTON_Y, tpf);
+                manageInput(state, GLFW_GAMEPAD_BUTTON_START, BB_BUTTON_START, tpf);
+                manageInput(state, GLFW_GAMEPAD_BUTTON_BACK, BB_BUTTON_BACK, tpf);
+                manageInput(state, GLFW_GAMEPAD_BUTTON_LEFT_BUMPER, BB_BUTTON_LBU, tpf);
+                manageInput(state, GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER, BB_BUTTON_RBU, tpf);
+                manageInput(state, GLFW_GAMEPAD_BUTTON_LEFT_THUMB, BB_BUTTON_LTH, tpf);
+                manageInput(state, GLFW_GAMEPAD_BUTTON_RIGHT_THUMB, BB_BUTTON_RTH, tpf);
 
             /*
             if (state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP) == GLFW.GLFW_PRESS) {
@@ -229,6 +308,34 @@ public class BigBananaAppState extends BaseAppState {
 
     }
 
+    private void manageInput(GLFWGamepadState state, int in, FunctionId fid, boolean invert, float tpf) {
+        float newstate = state.axes(in);
+        //if (newstate != prevstateAxes[in]) {
+        //System.out.println("Axis X " + x);
+        //System.out.println("Axis Y " + state.axes(GLFW_GAMEPAD_AXIS_LEFT_Y));
+        AnalogFunctionListener l = analogFunctionListeners.get(fid);
+        if (l == null)
+            return;
+        l.valueActive(fid, invert ? -newstate : newstate, tpf);
+        //    prevstateAxes[in] = newstate;
+        //}
+    }
+
+    private void manageInput(GLFWGamepadState state, int in, FunctionId fid, InputState is, float tpf) {
+        int newstate = state.buttons(in);
+        if (newstate != prevstate[in]) {
+            switch (newstate) {
+                case GLFW_PRESS:
+                    pressed(fid, tpf, is);
+                    break;
+                case GLFW_RELEASE:
+                    pressed(fid, tpf, InputState.Off);
+                    break;
+            }
+            prevstate[in] = newstate;
+        }
+    }
+
     private void manageInput(GLFWGamepadState state, int in, BBInput bin, float tpf) {
         int newstate = state.buttons(in);
         if (newstate != prevstate[in]) {
@@ -248,10 +355,14 @@ public class BigBananaAppState extends BaseAppState {
         FunctionId f = glfwMap.get(input);
         if (f == null)
             return;
-        StateFunctionListener l = listeners.get(f);
+        StateFunctionListener l = stateFunctionListeners.get(f);
         if (l == null)
             return;
         l.valueChanged(f, is, tpf);
+    }
+
+    private void pressed(FunctionId f, float tpf, InputState is) {
+        GuiGlobals.getInstance().getInputMapper().listenerMap.get(f).notifyStateChanged(f, is);
     }
 
     @Override
