@@ -39,6 +39,7 @@ public class BigBananaAppState extends BaseAppState {
     public static final String BB_MOVE_VERTICAL = "move.vertical";
 
     int prevstate[] = new int[15];
+    int prevstateAxesDpad[] = new int[2];
     //float prevstateAxes[] = new float[5];
 
     //public static Axis PAD_MOVE_VERTICAL;
@@ -63,9 +64,11 @@ public class BigBananaAppState extends BaseAppState {
     InputMapper inputMapper;
     GLFWGamepadState state;
     BigBananaPeel peel;
+
     boolean bananaful = false;
-    boolean invertLX;
-    boolean invertLY;
+    boolean invertLX = false;
+    boolean invertLY = false;
+    boolean useLeftStickAsDpad = true;
 
     public BigBananaAppState(BigBananaPeel peel) {
         this.peel = peel;
@@ -111,6 +114,10 @@ public class BigBananaAppState extends BaseAppState {
 
     public void setInvertLeftStickX(boolean invertLX) {
         this.invertLX = invertLX;
+    }
+
+    public void setUseLeftStickAsDpad(boolean b) {
+        useLeftStickAsDpad = b;
     }
 
     public void setInvertLeftStickY(boolean invertLY) {
@@ -187,6 +194,7 @@ public class BigBananaAppState extends BaseAppState {
 
     /**
      * Map the listener. Set it to null to remove.
+     *
      * @param listener
      */
 
@@ -196,6 +204,7 @@ public class BigBananaAppState extends BaseAppState {
 
     /**
      * Map the listener. Set it to null to remove.
+     *
      * @param listener
      */
 
@@ -205,6 +214,7 @@ public class BigBananaAppState extends BaseAppState {
 
     /**
      * Map the listener. Set it to null to remove.
+     *
      * @param listener
      */
 
@@ -214,6 +224,7 @@ public class BigBananaAppState extends BaseAppState {
 
     /**
      * Map the listener. Set it to null to remove.
+     *
      * @param listener
      */
 
@@ -272,8 +283,8 @@ public class BigBananaAppState extends BaseAppState {
 
             if (GLFW.glfwGetGamepadState(GLFW_JOYSTICK_1, state)) {
 
-                manageInput(state, GLFW_GAMEPAD_AXIS_LEFT_X, LEFT_STICK_X, invertLX, tpf);
-                manageInput(state, GLFW_GAMEPAD_AXIS_LEFT_Y, LEFT_STICK_Y, invertLY, tpf);
+                float leftX = manageInput(state, GLFW_GAMEPAD_AXIS_LEFT_X, LEFT_STICK_X, invertLX, tpf);
+                float leftY = manageInput(state, GLFW_GAMEPAD_AXIS_LEFT_Y, LEFT_STICK_Y, invertLY, tpf);
 
                 manageInput(state, GLFW_GAMEPAD_BUTTON_A, BB_BUTTON_A, tpf);
                 manageInput(state, GLFW_GAMEPAD_BUTTON_B, BB_BUTTON_B, tpf);
@@ -286,6 +297,54 @@ public class BigBananaAppState extends BaseAppState {
                 manageInput(state, GLFW_GAMEPAD_BUTTON_LEFT_THUMB, BB_BUTTON_LTH, tpf);
                 manageInput(state, GLFW_GAMEPAD_BUTTON_RIGHT_THUMB, BB_BUTTON_RTH, tpf);
 
+                if (useLeftStickAsDpad) {
+                    int newstate = 0;
+                    if (leftX > 0.5)
+                        newstate = 1;
+                    if (leftX < -0.5)
+                        newstate = -1;
+                    if (newstate != prevstateAxesDpad[0]) {
+                        switch (newstate) {
+                            case 1:
+                                pressed(F_X_AXIS, tpf, InputState.Positive);
+                                break;
+                            case 0:
+                                pressed(F_X_AXIS, tpf, InputState.Off);
+                                break;
+                            case -1:
+                                pressed(F_X_AXIS, tpf, InputState.Negative);
+                                break;
+                        }
+                        prevstateAxesDpad[0] = newstate;
+                    }
+
+                    newstate = 0;
+                    if (leftY > 0.5)
+                        newstate = 1;
+                    if (leftY < -0.5)
+                        newstate = -1;
+                    if (newstate != prevstateAxesDpad[1]) {
+                        switch (newstate) {
+                            case 1:
+                                pressed(F_Y_AXIS, tpf, InputState.Positive);
+                                break;
+                            case 0:
+                                pressed(F_Y_AXIS, tpf, InputState.Off);
+                                break;
+                            case -1:
+                                pressed(F_Y_AXIS, tpf, InputState.Negative);
+                                break;
+                        }
+                        prevstateAxesDpad[1] = newstate;
+                    }
+                }
+
+                manageInput(state, GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, F_X_AXIS, InputState.Positive, tpf);
+                manageInput(state, GLFW_GAMEPAD_BUTTON_DPAD_LEFT, F_X_AXIS, InputState.Negative, tpf);
+
+                manageInput(state, GLFW_GAMEPAD_BUTTON_DPAD_UP, F_Y_AXIS, InputState.Positive, tpf);
+                manageInput(state, GLFW_GAMEPAD_BUTTON_DPAD_DOWN, F_Y_AXIS, InputState.Negative, tpf);
+            }
             /*
             if (state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP) == GLFW.GLFW_PRESS) {
                 System.out.println("Pressed D UP!");
@@ -308,17 +367,21 @@ public class BigBananaAppState extends BaseAppState {
 
     }
 
-    private void manageInput(GLFWGamepadState state, int in, FunctionId fid, boolean invert, float tpf) {
+    private float manageInput(GLFWGamepadState state, int in, FunctionId fid, boolean invert, float tpf) {
         float newstate = state.axes(in);
         //if (newstate != prevstateAxes[in]) {
         //System.out.println("Axis X " + x);
         //System.out.println("Axis Y " + state.axes(GLFW_GAMEPAD_AXIS_LEFT_Y));
         AnalogFunctionListener l = analogFunctionListeners.get(fid);
         if (l == null)
-            return;
-        l.valueActive(fid, invert ? -newstate : newstate, tpf);
+            return 0;
+        if (invert) {
+            newstate = -newstate;
+        }
+        l.valueActive(fid, newstate, tpf);
         //    prevstateAxes[in] = newstate;
         //}
+        return newstate;
     }
 
     private void manageInput(GLFWGamepadState state, int in, FunctionId fid, InputState is, float tpf) {
