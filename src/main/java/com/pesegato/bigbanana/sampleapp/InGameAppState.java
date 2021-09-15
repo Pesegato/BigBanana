@@ -63,6 +63,8 @@ public class InGameAppState extends BaseAppState implements StateFunctionListene
         bbas = getState(BigBananaAppState.class);
         bbas.map(F_COOLACTION, MY_COOL_ACTION, this);
 
+        bbas.setUseLeftStickAsDpad(true);
+        bbas.setInvertLeftStickY(true);
     }
 
     @Override
