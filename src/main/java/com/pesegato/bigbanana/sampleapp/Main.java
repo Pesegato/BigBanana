@@ -25,7 +25,8 @@ public class Main extends SimpleApplication implements BigBananaPeel {
         Main app = new Main();
         app.setShowSettings(false);
         AppSettings settings = new AppSettings(true);
-        settings.setUseJoysticks(true);
+        //No need to use setUseJoysticks!
+        //settings.setUseJoysticks(true);
         app.setSettings(settings);
         app.start(); // start the game
     }
