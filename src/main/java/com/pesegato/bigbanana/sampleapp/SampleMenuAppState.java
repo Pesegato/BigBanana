@@ -4,14 +4,18 @@ import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
+import com.pesegato.bigbanana.BigBananaAppState;
 import com.pesegato.bigbanana.extra.BBStartable;
 import com.pesegato.bigbanana.RemapInputAppState;
 import com.pesegato.bigbanana.extra.StartGameAppState;
 import com.simsilica.lemur.*;
+import com.simsilica.lemur.input.AnalogFunctionListener;
+import com.simsilica.lemur.input.FunctionId;
 import com.simsilica.state.CompositeAppState;
 
-public class SampleMenuAppState extends CompositeAppState implements BBStartable {
+public class SampleMenuAppState extends CompositeAppState implements BBStartable, AnalogFunctionListener {
 
+    BigBananaAppState bbas;
     Container mainWindow;
 
     public SampleMenuAppState(Class c) {
@@ -47,6 +51,7 @@ public class SampleMenuAppState extends CompositeAppState implements BBStartable
         mainWindow.setLocalTranslation(100 * standardScale, y, 0);
         mainWindow.setLocalScale(1.5f * standardScale);
 
+        bbas = getState(BigBananaAppState.class);
     }
 
     public void startGame() {
@@ -71,6 +76,8 @@ public class SampleMenuAppState extends CompositeAppState implements BBStartable
     @Override
     protected void onEnable() {
         super.onEnable();
+        bbas.mapLeftStickX(this);
+        bbas.mapLeftStickY(this);
         Node gui = ((SimpleApplication) getApplication()).getGuiNode();
         gui.attachChild(mainWindow);
         GuiGlobals.getInstance().requestFocus(mainWindow);
@@ -80,6 +87,13 @@ public class SampleMenuAppState extends CompositeAppState implements BBStartable
     @Override
     protected void onDisable() {
         super.onDisable();
+        bbas.mapLeftStickX(null);
+        bbas.mapLeftStickY(null);
         mainWindow.removeFromParent();
+    }
+
+    @Override
+    public void valueActive(FunctionId func, double value, double tpf) {
+
     }
 }
