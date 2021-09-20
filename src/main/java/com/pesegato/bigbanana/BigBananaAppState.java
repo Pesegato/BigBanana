@@ -9,7 +9,11 @@ import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
 import com.jme3.input.KeyInput;
 import com.jme3.input.KeyNames;
+import com.jme3.input.event.MouseButtonEvent;
+import com.jme3.scene.Spatial;
+import com.jme3.scene.control.Control;
 import com.simsilica.lemur.GuiGlobals;
+import com.simsilica.lemur.event.MouseEventControl;
 import com.simsilica.lemur.input.*;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWGamepadState;
@@ -21,6 +25,7 @@ import java.nio.ByteBuffer;
 import java.util.HashMap;
 
 import static com.pesegato.bigbanana.BBInput.*;
+import static com.pesegato.bigbanana.extra.BigBananaFunctions.F_BACK;
 import static com.simsilica.lemur.focus.FocusNavigationFunctions.*;
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -72,6 +77,8 @@ public class BigBananaAppState extends BaseAppState {
 
     public BigBananaAppState(BigBananaPeel peel) {
         this.peel = peel;
+        setUseLeftStickAsDpad(true);
+        setInvertLeftStickY(true);
     }
 
     private int getKeyboardInput(String key, String deflt) {
@@ -184,6 +191,11 @@ public class BigBananaAppState extends BaseAppState {
 
     public void deactivateGroup(String group) {
         inputMapper.deactivateGroup(group);
+    }
+
+    public void mapBack(StateFunctionListener listener) {
+        addStateListener(listener, F_BACK);
+        glfwMap.put(BB_BUTTON_BACK, F_BACK);
     }
 
     public void map(FunctionId id, String key, StateFunctionListener listener) {
@@ -405,9 +417,32 @@ public class BigBananaAppState extends BaseAppState {
             switch (newstate) {
                 case GLFW_PRESS:
                     pressed(bin, tpf, InputState.Positive);
+                    if (in == GLFW_GAMEPAD_BUTTON_A) {
+                        Spatial s = GuiGlobals.getInstance().getCurrentFocus();
+                        System.out.println(s);
+                        for (int i = 0; i < s.getNumControls(); i++) {
+                            Control a = s.getControl(i);
+                            if (a instanceof MouseEventControl) {
+                                ((MouseEventControl) a).mouseButtonEvent(new MouseButtonEvent(1, true, 0, 0), s, s);
+                            } else if (a instanceof StateFunctionListener) {
+                                ((StateFunctionListener) a).valueChanged(F_ACTIVATE, InputState.Positive, tpf);
+                            }
+                        }
+                    }
                     break;
                 case GLFW_RELEASE:
                     pressed(bin, tpf, InputState.Off);
+                    if (in == GLFW_GAMEPAD_BUTTON_A) {
+                        Spatial s = GuiGlobals.getInstance().getCurrentFocus();
+                        for (int i = 0; i < s.getNumControls(); i++) {
+                            Control a = s.getControl(i);
+                            if (a instanceof MouseEventControl) {
+                                ((MouseEventControl) a).mouseButtonEvent(new MouseButtonEvent(1, false, 0, 0), s, s);
+                            } else if (a instanceof StateFunctionListener) {
+                                ((StateFunctionListener) a).valueChanged(F_ACTIVATE, InputState.Off, tpf);
+                            }
+                        }
+                    }
                     break;
             }
             prevstate[in] = newstate;
