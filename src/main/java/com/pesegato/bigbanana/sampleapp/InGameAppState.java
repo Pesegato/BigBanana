@@ -62,9 +62,8 @@ public class InGameAppState extends BaseAppState implements StateFunctionListene
         //BigBananaFunctions.initializeDefaultMappings(inputMapper);
         bbas = getState(BigBananaAppState.class);
         bbas.map(F_COOLACTION, MY_COOL_ACTION, this);
+        bbas.mapBack( this);
 
-        bbas.setUseLeftStickAsDpad(true);
-        bbas.setInvertLeftStickY(true);
     }
 
     @Override
