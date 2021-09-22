@@ -11,9 +11,11 @@ import com.pesegato.bigbanana.extra.StartGameAppState;
 import com.simsilica.lemur.*;
 import com.simsilica.lemur.input.AnalogFunctionListener;
 import com.simsilica.lemur.input.FunctionId;
+import com.simsilica.lemur.input.InputState;
+import com.simsilica.lemur.input.StateFunctionListener;
 import com.simsilica.state.CompositeAppState;
 
-public class SampleMenuAppState extends CompositeAppState implements BBStartable, AnalogFunctionListener {
+public class SampleMenuAppState extends CompositeAppState implements BBStartable, AnalogFunctionListener, StateFunctionListener {
 
     BigBananaAppState bbas;
     Container mainWindow;
@@ -76,8 +78,7 @@ public class SampleMenuAppState extends CompositeAppState implements BBStartable
     @Override
     protected void onEnable() {
         super.onEnable();
-        bbas.mapLeftStickX(this);
-        bbas.mapLeftStickY(this);
+        bbas.activate(this, this);
         Node gui = ((SimpleApplication) getApplication()).getGuiNode();
         gui.attachChild(mainWindow);
         GuiGlobals.getInstance().requestFocus(mainWindow);
@@ -87,13 +88,17 @@ public class SampleMenuAppState extends CompositeAppState implements BBStartable
     @Override
     protected void onDisable() {
         super.onDisable();
-        bbas.mapLeftStickX(null);
-        bbas.mapLeftStickY(null);
+        bbas.deactivate();
         mainWindow.removeFromParent();
     }
 
     @Override
     public void valueActive(FunctionId func, double value, double tpf) {
+
+    }
+
+    @Override
+    public void valueChanged(FunctionId func, InputState value, double tpf) {
 
     }
 }

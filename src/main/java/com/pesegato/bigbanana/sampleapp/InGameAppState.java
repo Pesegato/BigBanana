@@ -16,16 +16,13 @@ import com.simsilica.lemur.input.FunctionId;
 import com.simsilica.lemur.input.InputState;
 import com.simsilica.lemur.input.StateFunctionListener;
 
-import static com.pesegato.bigbanana.BigBananaAppState.LEFT_STICK_X;
-import static com.pesegato.bigbanana.BigBananaAppState.LEFT_STICK_Y;
+import static com.pesegato.bigbanana.BigBananaAppState.*;
 import static com.pesegato.bigbanana.extra.BigBananaFunctions.F_BACK;
 import static com.pesegato.bigbanana.sampleapp.Main.MY_COOL_ACTION;
 
 public class InGameAppState extends BaseAppState implements StateFunctionListener, AnalogFunctionListener {
 
-    public static final String GROUP_SAMPLE = "group sample";
-
-    public static final FunctionId F_COOLACTION = new FunctionId(GROUP_SAMPLE, "cool action");
+    public static final FunctionId F_COOLACTION = new FunctionId(BB_GROUP, "cool action");
 
     Geometry leftStick;
 
@@ -73,21 +70,14 @@ public class InGameAppState extends BaseAppState implements StateFunctionListene
 
     @Override
     protected void onEnable() {
-        bbas.mapLeftStickX(this);
-        bbas.mapLeftStickY(this);
-        bbas.setInvertLeftStickY(true);
-        bbas.addStateListener(this, F_BACK);
-        bbas.activateGroup(GROUP_SAMPLE);
+        bbas.activate(this, this);
         //GuiGlobals.getInstance().getInputMapper().activateGroup(GROUP_BIGBANANA);
         ((SimpleApplication) getApplication()).getGuiNode().attachChild(stateGuiNode);
     }
 
     @Override
     protected void onDisable() {
-        bbas.mapLeftStickX(null);
-        bbas.mapLeftStickY(null);
-        bbas.removeStateListener(this, F_BACK);
-        bbas.deactivateGroup(GROUP_SAMPLE);
+        bbas.deactivate();
         //GuiGlobals.getInstance().getInputMapper().deactivateGroup(GROUP_BIGBANANA);
         stateGuiNode.removeFromParent();
     }
