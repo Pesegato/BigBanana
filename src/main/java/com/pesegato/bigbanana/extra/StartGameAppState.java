@@ -2,10 +2,10 @@ package com.pesegato.bigbanana.extra;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
-import com.simsilica.lemur.GuiGlobals;
-import com.simsilica.lemur.input.*;
-
-import static com.pesegato.bigbanana.extra.BigBananaFunctions.*;
+import com.simsilica.lemur.input.FunctionId;
+import com.simsilica.lemur.input.InputMapper;
+import com.simsilica.lemur.input.InputState;
+import com.simsilica.lemur.input.StateFunctionListener;
 
 public class StartGameAppState extends BaseAppState implements StateFunctionListener {
 
@@ -18,10 +18,6 @@ public class StartGameAppState extends BaseAppState implements StateFunctionList
 
     @Override
     protected void initialize(Application app) {
-        inputMapper = GuiGlobals.getInstance().getInputMapper();
-        BigBananaFunctions.initializeDefaultMappings(inputMapper);
-        //moved to onEnable
-        //inputMapper.addStateListener(this, F_START);
     }
 
     @Override
@@ -30,14 +26,10 @@ public class StartGameAppState extends BaseAppState implements StateFunctionList
 
     @Override
     protected void onEnable() {
-        inputMapper.addStateListener(this, F_START);
-        GuiGlobals.getInstance().getInputMapper().activateGroup(GROUP_BIGBANANA);
     }
 
     @Override
     protected void onDisable() {
-        inputMapper.removeStateListener(this, F_START);
-        //GuiGlobals.getInstance().getInputMapper().deactivateGroup(GROUP_BIGBANANA);
     }
 
     @Override
