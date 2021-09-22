@@ -26,6 +26,7 @@ import java.util.HashMap;
 
 import static com.pesegato.bigbanana.BBInput.*;
 import static com.pesegato.bigbanana.extra.BigBananaFunctions.F_BACK;
+import static com.pesegato.bigbanana.extra.BigBananaFunctions.GROUP_BIGBANANA;
 import static com.simsilica.lemur.focus.FocusNavigationFunctions.*;
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -35,8 +36,6 @@ import static org.lwjgl.glfw.GLFW.*;
 public class BigBananaAppState extends BaseAppState {
 
     static Logger log = LoggerFactory.getLogger(BigBananaAppState.class);
-
-    public static final String BB_GROUP = "bigbanana group";
 
     public static final String BB_MOVEUP = "move.up";
     public static final String BB_MOVEDOWN = "move.down";
@@ -211,14 +210,14 @@ public class BigBananaAppState extends BaseAppState {
         mapLeftStickY(analogFunctionListener);
         setInvertLeftStickY(true);
         addStateListener(stateFunctionListener, F_BACK);
-        activateGroup(BB_GROUP);
+        activateGroup(GROUP_BIGBANANA);
     }
 
     public void deactivate(){
         mapLeftStickX(null);
         mapLeftStickY(null);
         removeStateListener(stateFunctionListeners.get(F_BACK), F_BACK);
-        deactivateGroup(BB_GROUP);
+        deactivateGroup(GROUP_BIGBANANA);
     }
 
     /**

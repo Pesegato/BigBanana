@@ -18,11 +18,12 @@ import com.simsilica.lemur.input.StateFunctionListener;
 
 import static com.pesegato.bigbanana.BigBananaAppState.*;
 import static com.pesegato.bigbanana.extra.BigBananaFunctions.F_BACK;
+import static com.pesegato.bigbanana.extra.BigBananaFunctions.GROUP_BIGBANANA;
 import static com.pesegato.bigbanana.sampleapp.Main.MY_COOL_ACTION;
 
 public class InGameAppState extends BaseAppState implements StateFunctionListener, AnalogFunctionListener {
 
-    public static final FunctionId F_COOLACTION = new FunctionId(BB_GROUP, "cool action");
+    public static final FunctionId F_COOLACTION = new FunctionId(GROUP_BIGBANANA, "cool action");
 
     Geometry leftStick;
 
