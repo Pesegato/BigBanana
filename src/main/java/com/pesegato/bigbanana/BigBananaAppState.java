@@ -36,6 +36,8 @@ public class BigBananaAppState extends BaseAppState {
 
     static Logger log = LoggerFactory.getLogger(BigBananaAppState.class);
 
+    public static final String BB_GROUP = "bigbanana group";
+
     public static final String BB_MOVEUP = "move.up";
     public static final String BB_MOVEDOWN = "move.down";
     public static final String BB_MOVERIGHT = "move.right";
@@ -202,6 +204,21 @@ public class BigBananaAppState extends BaseAppState {
         inputMapper.map(id, BBBindings.getK(key));
         addStateListener(listener, id);
         glfwMap.put(BBBindings.getP(key), id);
+    }
+
+    public void activate(AnalogFunctionListener analogFunctionListener, StateFunctionListener stateFunctionListener){
+        mapLeftStickX(analogFunctionListener);
+        mapLeftStickY(analogFunctionListener);
+        setInvertLeftStickY(true);
+        addStateListener(stateFunctionListener, F_BACK);
+        activateGroup(BB_GROUP);
+    }
+
+    public void deactivate(){
+        mapLeftStickX(null);
+        mapLeftStickY(null);
+        removeStateListener(stateFunctionListeners.get(F_BACK), F_BACK);
+        deactivateGroup(BB_GROUP);
     }
 
     /**
