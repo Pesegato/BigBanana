@@ -86,7 +86,9 @@ public class BigBananaAppState extends BaseAppState {
         log.trace("Loading settings for {}", key);
         String val = peel.getProperties().getProperty("keyboard." + key, deflt);
         for (int i = 0; i < 0xff; i++) {
-            if (KeyNames.getName(i).equals(val)) {
+            String keyname = KeyNames.getName(i);
+            if ((keyname != null) && (keyname.equals(val))) {
+                log.info("{} -> {}", key, val);
                 return i;
             }
         }
@@ -99,8 +101,10 @@ public class BigBananaAppState extends BaseAppState {
         String val = peel.getProperties().getProperty("pad." + key);
         for (Field field : BBInput.class.getFields()) {
             BBInput input = (BBInput) field.get(null);
-            if (input.getName().equals(val))
+            if (input.getName().equals(val)) {
+                log.info("{} -> {}", key, val);
                 return input;
+            }
         }
         return deflt;
     }
@@ -205,7 +209,7 @@ public class BigBananaAppState extends BaseAppState {
         glfwMap.put(BBBindings.getP(key), id);
     }
 
-    public void activate(AnalogFunctionListener analogFunctionListener, StateFunctionListener stateFunctionListener){
+    public void activate(AnalogFunctionListener analogFunctionListener, StateFunctionListener stateFunctionListener) {
         mapLeftStickX(analogFunctionListener);
         mapLeftStickY(analogFunctionListener);
         setInvertLeftStickY(true);
@@ -213,7 +217,7 @@ public class BigBananaAppState extends BaseAppState {
         activateGroup(GROUP_BIGBANANA);
     }
 
-    public void deactivate(){
+    public void deactivate() {
         mapLeftStickX(null);
         mapLeftStickY(null);
         removeStateListener(stateFunctionListeners.get(F_BACK), F_BACK);
