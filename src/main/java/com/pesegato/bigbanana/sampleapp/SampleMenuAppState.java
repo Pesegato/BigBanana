@@ -35,9 +35,10 @@ public class SampleMenuAppState extends CompositeAppState implements BBStartable
 
         Label title = mainWindow.addChild(new Label("Main menu"));
         title.setFontSize(24);
+        mainWindow.addChild(new ActionButton(new CallMethodAction("Start UI navigation", this, "startNavigation")));
         mainWindow.addChild(new ActionButton(new CallMethodAction("Start fake game", this, "startGame")));
         mainWindow.addChild(new ActionButton(new CallMethodAction("Remap input", this, "remapInput")));
-        mainWindow.addChild(new ActionButton(new CallMethodAction("Quit game", this, "quitGame")));
+        mainWindow.addChild(new ActionButton(new CallMethodAction("Quit", this, "quitGame")));
         mainWindow.addChild(new Label("Press START to play (sort of...)"));
         // Calculate a standard scale and position from the app's camera
         // height
@@ -54,6 +55,11 @@ public class SampleMenuAppState extends CompositeAppState implements BBStartable
         mainWindow.setLocalScale(1.5f * standardScale);
 
         bbas = getState(BigBananaAppState.class);
+    }
+
+    public void startNavigation() {
+        setEnabled(false);
+        getStateManager().attach(new NavigationAppState());
     }
 
     public void startGame() {
@@ -78,6 +84,7 @@ public class SampleMenuAppState extends CompositeAppState implements BBStartable
     @Override
     protected void onEnable() {
         super.onEnable();
+        bbas.enableUINavigationMode(true);
         bbas.activate(this, this);
         Node gui = ((SimpleApplication) getApplication()).getGuiNode();
         gui.attachChild(mainWindow);
