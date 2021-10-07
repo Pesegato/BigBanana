@@ -75,6 +75,7 @@ public class BigBananaAppState extends BaseAppState {
     boolean invertLX = false;
     boolean invertLY = false;
     boolean useLeftStickAsDpad = true;
+    boolean useKeysAsLeftStick = true;
 
     public BigBananaAppState(BigBananaPeel peel) {
         this.peel = peel;
@@ -224,6 +225,16 @@ public class BigBananaAppState extends BaseAppState {
         deactivateGroup(GROUP_BIGBANANA);
     }
 
+    public void enableUINavigationMode(boolean enable) {
+        if (enable) {
+            getApplication().getInputManager().setCursorVisible(true);
+            GuiGlobals.getInstance().getInputMapper().activateGroup(UI_NAV);
+        } else {
+            getApplication().getInputManager().setCursorVisible(false);
+            GuiGlobals.getInstance().getInputMapper().deactivateGroup(UI_NAV);
+        }
+    }
+
     /**
      * Map the listener. Set it to null to remove.
      *
@@ -307,6 +318,13 @@ public class BigBananaAppState extends BaseAppState {
         //inputMapper.map(F_Y_AXIS, InputState.Negative, PAD_MOVE_HORIZONTAL);
         inputMapper.map(F_Y_AXIS, KEYBOARD_MOVE_UP);
         inputMapper.map(F_Y_AXIS, InputState.Negative, KEYBOARD_MOVE_DOWN);
+
+        if (useKeysAsLeftStick) {
+            inputMapper.map(LEFT_STICK_X, KEYBOARD_MOVE_RIGHT);
+            inputMapper.map(LEFT_STICK_X, InputState.Negative, KEYBOARD_MOVE_LEFT);
+            inputMapper.map(LEFT_STICK_Y, KEYBOARD_MOVE_UP);
+            inputMapper.map(LEFT_STICK_Y, InputState.Negative, KEYBOARD_MOVE_DOWN);
+        }
     }
 
     public void update(float tpf) {
