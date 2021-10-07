@@ -8,15 +8,14 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Quad;
-import com.pesegato.bigbanana.BBFocusTraversal;
 import com.pesegato.bigbanana.BigBananaAppState;
-import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.input.AnalogFunctionListener;
 import com.simsilica.lemur.input.FunctionId;
 import com.simsilica.lemur.input.InputState;
 import com.simsilica.lemur.input.StateFunctionListener;
 
-import static com.pesegato.bigbanana.BigBananaAppState.*;
+import static com.pesegato.bigbanana.BigBananaAppState.LEFT_STICK_X;
+import static com.pesegato.bigbanana.BigBananaAppState.LEFT_STICK_Y;
 import static com.pesegato.bigbanana.extra.BigBananaFunctions.F_BACK;
 import static com.pesegato.bigbanana.extra.BigBananaFunctions.GROUP_BIGBANANA;
 import static com.pesegato.bigbanana.sampleapp.Main.MY_COOL_ACTION;
@@ -25,31 +24,13 @@ public class InGameAppState extends BaseAppState implements StateFunctionListene
 
     public static final FunctionId F_COOLACTION = new FunctionId(GROUP_BIGBANANA, "cool action");
 
-    Geometry leftStick;
+    Geometry leftStick, coolAction;
 
     BigBananaAppState bbas;
     Node stateGuiNode = new Node();
 
     @Override
     protected void initialize(Application app) {
-        IngameBanana b[][] = new IngameBanana[3][3];
-        BBFocusTraversal bbft = new BBFocusTraversal();
-        stateGuiNode.addControl(bbft);
-        for (int i = 0; i < b.length; i++) {
-            for (int j = 0; j < b[i].length; j++) {
-                b[i][j] = new IngameBanana(app.getAssetManager(), 50, 50);
-                b[i][j].geo.setLocalTranslation(100 + i * 100, 400 - j * 100, 0);
-                stateGuiNode.attachChild(b[i][j].geo);
-                bbft.addFocusable(b[i][j].geo, j, i, 1, 1);
-            }
-        }
-        IngameBanana bottom = new IngameBanana(app.getAssetManager(), 250, 50);
-        bottom.geo.setLocalTranslation(100, 100, 0);
-        stateGuiNode.attachChild(bottom.geo);
-        bbft.addFocusable(bottom.geo, 3, 0, 3, 1);
-
-        GuiGlobals.getInstance().requestFocus(b[0][0].geo);
-
         leftStick = new Geometry("MyQuad", new Quad(10, 10));
         Material m = new Material(app.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
         m.setColor("Color", ColorRGBA.Green);
@@ -57,21 +38,28 @@ public class InGameAppState extends BaseAppState implements StateFunctionListene
         leftStick.setLocalTranslation(400, 50, 0);
         stateGuiNode.attachChild(leftStick);
 
+        coolAction = new Geometry("CoolAction", new Quad(50, 50));
+        Material mc = new Material(app.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+        mc.setColor("Color", ColorRGBA.DarkGray);
+        coolAction.setMaterial(mc);
+        coolAction.setLocalTranslation(200, 100, 0);
+        stateGuiNode.attachChild(coolAction);
+
         //BigBananaFunctions.initializeDefaultMappings(inputMapper);
         bbas = getState(BigBananaAppState.class);
         bbas.map(F_COOLACTION, MY_COOL_ACTION, this);
-        bbas.mapBack( this);
+        bbas.mapBack(this);
 
     }
 
     @Override
     protected void cleanup(Application app) {
-
     }
 
     @Override
     protected void onEnable() {
         bbas.activate(this, this);
+        bbas.enableUINavigationMode(false);
         //GuiGlobals.getInstance().getInputMapper().activateGroup(GROUP_BIGBANANA);
         ((SimpleApplication) getApplication()).getGuiNode().attachChild(stateGuiNode);
     }
@@ -88,6 +76,10 @@ public class InGameAppState extends BaseAppState implements StateFunctionListene
         if (func.equals(F_COOLACTION)) {
             if (value.equals(InputState.Off)) {
                 System.out.println("Wow, cool action!");
+                coolAction.getMaterial().setColor("Color", ColorRGBA.DarkGray);
+            }
+            else {
+                coolAction.getMaterial().setColor("Color", ColorRGBA.Red);
             }
         }
         if (func.equals(F_BACK)) {
