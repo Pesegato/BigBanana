@@ -18,11 +18,13 @@ import static com.pesegato.bigbanana.BigBananaAppState.LEFT_STICK_X;
 import static com.pesegato.bigbanana.BigBananaAppState.LEFT_STICK_Y;
 import static com.pesegato.bigbanana.extra.BigBananaFunctions.F_BACK;
 import static com.pesegato.bigbanana.extra.BigBananaFunctions.GROUP_BIGBANANA;
+import static com.pesegato.bigbanana.sampleapp.Main.ANOTHER_ACTION;
 import static com.pesegato.bigbanana.sampleapp.Main.MY_COOL_ACTION;
 
 public class InGameAppState extends BaseAppState implements StateFunctionListener, AnalogFunctionListener {
 
     public static final FunctionId F_COOLACTION = new FunctionId(GROUP_BIGBANANA, "cool action");
+    public static final FunctionId F_ANOTHER_ACTION = new FunctionId(GROUP_BIGBANANA, "another action");
 
     Geometry leftStick, coolAction;
 
@@ -48,6 +50,7 @@ public class InGameAppState extends BaseAppState implements StateFunctionListene
         //BigBananaFunctions.initializeDefaultMappings(inputMapper);
         bbas = getState(BigBananaAppState.class);
         bbas.map(F_COOLACTION, MY_COOL_ACTION, this);
+        bbas.map(F_ANOTHER_ACTION, ANOTHER_ACTION, this);
         bbas.mapBack(this);
 
     }
@@ -77,11 +80,19 @@ public class InGameAppState extends BaseAppState implements StateFunctionListene
             if (value.equals(InputState.Off)) {
                 System.out.println("Wow, cool action!");
                 coolAction.getMaterial().setColor("Color", ColorRGBA.DarkGray);
-            }
-            else {
+            } else {
                 coolAction.getMaterial().setColor("Color", ColorRGBA.Red);
             }
         }
+        if (func.equals(F_ANOTHER_ACTION)) {
+            if (value.equals(InputState.Off)) {
+                System.out.println("Another action!");
+                coolAction.getMaterial().setColor("Color", ColorRGBA.DarkGray);
+            } else {
+                coolAction.getMaterial().setColor("Color", ColorRGBA.Green);
+            }
+        }
+
         if (func.equals(F_BACK)) {
             if (value.equals(InputState.Off)) {
                 System.out.println("Pressed " + func);

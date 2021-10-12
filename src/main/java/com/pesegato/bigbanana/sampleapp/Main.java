@@ -81,6 +81,8 @@ public class Main extends SimpleApplication implements BigBananaPeel {
         switch (key) {
             case MY_COOL_ACTION:
                 return BBInput.BB_BUTTON_X;
+            case ANOTHER_ACTION:
+                return BBInput.BB_BUTTON_Y;
         }
         return null;
     }
