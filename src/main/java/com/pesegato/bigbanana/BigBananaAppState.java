@@ -37,6 +37,8 @@ public class BigBananaAppState extends BaseAppState {
 
     static Logger log = LoggerFactory.getLogger(BigBananaAppState.class);
 
+    private static final float DEADZONE_THRESHOLD = 0.01f;
+
     public static final String BB_MOVEUP = "move.up";
     public static final String BB_MOVEDOWN = "move.down";
     public static final String BB_MOVERIGHT = "move.right";
@@ -214,6 +216,8 @@ public class BigBananaAppState extends BaseAppState {
         mapLeftStickX(analogFunctionListener);
         mapLeftStickY(analogFunctionListener);
         setInvertLeftStickY(true);
+        GuiGlobals.getInstance().getInputMapper().addAnalogListener(analogFunctionListener, LEFT_STICK_X);
+        GuiGlobals.getInstance().getInputMapper().addAnalogListener(analogFunctionListener, LEFT_STICK_Y);
         addStateListener(stateFunctionListener, F_BACK);
         activateGroup(GROUP_BIGBANANA);
     }
@@ -221,6 +225,11 @@ public class BigBananaAppState extends BaseAppState {
     public void deactivate() {
         mapLeftStickX(null);
         mapLeftStickY(null);
+        AnalogFunctionListener listener = analogFunctionListeners.get(LEFT_STICK_X);
+        if (listener != null) {
+            GuiGlobals.getInstance().getInputMapper().removeAnalogListener(listener, LEFT_STICK_X);
+            GuiGlobals.getInstance().getInputMapper().removeAnalogListener(listener, LEFT_STICK_Y);
+        }
         removeStateListener(stateFunctionListeners.get(F_BACK), F_BACK);
         deactivateGroup(GROUP_BIGBANANA);
     }
@@ -391,9 +400,24 @@ public class BigBananaAppState extends BaseAppState {
 
                 manageInput(state, GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, F_X_AXIS, InputState.Positive, tpf);
                 manageInput(state, GLFW_GAMEPAD_BUTTON_DPAD_LEFT, F_X_AXIS, InputState.Negative, tpf);
+                if (leftX < DEADZONE_THRESHOLD) {
+                    if (state.buttons(GLFW_GAMEPAD_BUTTON_DPAD_RIGHT) == GLFW_PRESS) {
+                        analogFunctionListeners.get(LEFT_STICK_X).valueActive(LEFT_STICK_X, 1.0, tpf);
+                    } else if (state.buttons(GLFW_GAMEPAD_BUTTON_DPAD_LEFT) == GLFW_PRESS) {
+                        analogFunctionListeners.get(LEFT_STICK_X).valueActive(LEFT_STICK_X, -1.0, tpf);
+                    }
+                }
 
                 manageInput(state, GLFW_GAMEPAD_BUTTON_DPAD_UP, F_Y_AXIS, InputState.Positive, tpf);
                 manageInput(state, GLFW_GAMEPAD_BUTTON_DPAD_DOWN, F_Y_AXIS, InputState.Negative, tpf);
+
+                if (leftY < DEADZONE_THRESHOLD) {
+                    if (state.buttons(GLFW_GAMEPAD_BUTTON_DPAD_UP) == GLFW_PRESS) {
+                        analogFunctionListeners.get(LEFT_STICK_Y).valueActive(LEFT_STICK_Y, 1.0, tpf);
+                    } else if (state.buttons(GLFW_GAMEPAD_BUTTON_DPAD_DOWN) == GLFW_PRESS) {
+                        analogFunctionListeners.get(LEFT_STICK_Y).valueActive(LEFT_STICK_Y, -1.0, tpf);
+                    }
+                }
             }
             /*
             if (state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP) == GLFW.GLFW_PRESS) {
