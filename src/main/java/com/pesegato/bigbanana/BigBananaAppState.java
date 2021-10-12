@@ -482,6 +482,8 @@ public class BigBananaAppState extends BaseAppState {
                     if (in == GLFW_GAMEPAD_BUTTON_A) {
                         Spatial s = GuiGlobals.getInstance().getCurrentFocus();
                         System.out.println(s);
+                        if (s == null)
+                            return;//???
                         for (int i = 0; i < s.getNumControls(); i++) {
                             Control a = s.getControl(i);
                             if (a instanceof MouseEventControl) {
