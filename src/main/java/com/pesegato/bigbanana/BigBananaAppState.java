@@ -478,32 +478,36 @@ public class BigBananaAppState extends BaseAppState {
         if (newstate != prevstate[in]) {
             switch (newstate) {
                 case GLFW_PRESS:
+                    //log.trace("Pressed {}", bin.getName());
                     pressed(bin, tpf, InputState.Positive);
                     if (in == GLFW_GAMEPAD_BUTTON_A) {
                         Spatial s = GuiGlobals.getInstance().getCurrentFocus();
                         System.out.println(s);
-                        if (s == null)
-                            return;//???
-                        for (int i = 0; i < s.getNumControls(); i++) {
-                            Control a = s.getControl(i);
-                            if (a instanceof MouseEventControl) {
-                                ((MouseEventControl) a).mouseButtonEvent(new MouseButtonEvent(1, true, 0, 0), s, s);
-                            } else if (a instanceof StateFunctionListener) {
-                                ((StateFunctionListener) a).valueChanged(F_ACTIVATE, InputState.Positive, tpf);
+                        if (s != null) {
+                            for (int i = 0; i < s.getNumControls(); i++) {
+                                Control a = s.getControl(i);
+                                if (a instanceof MouseEventControl) {
+                                    ((MouseEventControl) a).mouseButtonEvent(new MouseButtonEvent(1, true, 0, 0), s, s);
+                                } else if (a instanceof StateFunctionListener) {
+                                    ((StateFunctionListener) a).valueChanged(F_ACTIVATE, InputState.Positive, tpf);
+                                }
                             }
                         }
                     }
                     break;
                 case GLFW_RELEASE:
+                    //log.trace("Released {}", bin.getName());
                     pressed(bin, tpf, InputState.Off);
                     if (in == GLFW_GAMEPAD_BUTTON_A) {
                         Spatial s = GuiGlobals.getInstance().getCurrentFocus();
-                        for (int i = 0; i < s.getNumControls(); i++) {
-                            Control a = s.getControl(i);
-                            if (a instanceof MouseEventControl) {
-                                ((MouseEventControl) a).mouseButtonEvent(new MouseButtonEvent(1, false, 0, 0), s, s);
-                            } else if (a instanceof StateFunctionListener) {
-                                ((StateFunctionListener) a).valueChanged(F_ACTIVATE, InputState.Off, tpf);
+                        if (s != null) {
+                            for (int i = 0; i < s.getNumControls(); i++) {
+                                Control a = s.getControl(i);
+                                if (a instanceof MouseEventControl) {
+                                    ((MouseEventControl) a).mouseButtonEvent(new MouseButtonEvent(1, false, 0, 0), s, s);
+                                } else if (a instanceof StateFunctionListener) {
+                                    ((StateFunctionListener) a).valueChanged(F_ACTIVATE, InputState.Off, tpf);
+                                }
                             }
                         }
                     }
