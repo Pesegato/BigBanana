@@ -14,7 +14,6 @@ import com.simsilica.lemur.focus.FocusTarget;
 import com.simsilica.lemur.input.StateFunctionListener;
 
 /**
- *
  * @author Pesegato
  */
 public abstract class BBFocusTarget extends AbstractControl implements FocusTarget, StateFunctionListener {

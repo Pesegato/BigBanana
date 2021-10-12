@@ -99,7 +99,7 @@ public class BigBananaAppState extends BaseAppState {
 
     private BBInput getButtonInput(String key, BBInput deflt) throws IllegalAccessException {
         log.trace("Loading settings for {}", key);
-        String val = peel.getProperties().getProperty("pad." + key);
+        String val = peel.getProperties().getProperty("pad." + key, deflt.getName());
         for (Field field : BBInput.class.getFields()) {
             BBInput input = (BBInput) field.get(null);
             if (input.getName().equals(val)) {
@@ -107,7 +107,7 @@ public class BigBananaAppState extends BaseAppState {
                 return input;
             }
         }
-        return deflt;
+        return null;
     }
 
     /*private Axis getAxisInput(String key, String deftl) throws IllegalAccessException {
