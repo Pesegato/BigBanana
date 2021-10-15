@@ -37,7 +37,7 @@ public class BigBananaAppState extends BaseAppState {
 
     static Logger log = LoggerFactory.getLogger(BigBananaAppState.class);
 
-    private static final float DEADZONE_THRESHOLD = 0.01f;
+    private static float DEADZONE = 0.02f;
 
     public static final String BB_MOVEUP = "move.up";
     public static final String BB_MOVEDOWN = "move.down";
@@ -126,6 +126,10 @@ public class BigBananaAppState extends BaseAppState {
         }
         return null;
     }*/
+
+    public void setDeadZone(float deadzone) {
+        DEADZONE = deadzone;
+    }
 
     public void setInvertLeftStickX(boolean invertLX) {
         this.invertLX = invertLX;
@@ -400,7 +404,7 @@ public class BigBananaAppState extends BaseAppState {
 
                 manageInput(state, GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, F_X_AXIS, InputState.Positive, tpf);
                 manageInput(state, GLFW_GAMEPAD_BUTTON_DPAD_LEFT, F_X_AXIS, InputState.Negative, tpf);
-                if (leftX < DEADZONE_THRESHOLD) {
+                if (leftX < DEADZONE) {
                     if (state.buttons(GLFW_GAMEPAD_BUTTON_DPAD_RIGHT) == GLFW_PRESS) {
                         analogFunctionListeners.get(LEFT_STICK_X).valueActive(LEFT_STICK_X, 1.0, tpf);
                     } else if (state.buttons(GLFW_GAMEPAD_BUTTON_DPAD_LEFT) == GLFW_PRESS) {
@@ -411,7 +415,7 @@ public class BigBananaAppState extends BaseAppState {
                 manageInput(state, GLFW_GAMEPAD_BUTTON_DPAD_UP, F_Y_AXIS, InputState.Positive, tpf);
                 manageInput(state, GLFW_GAMEPAD_BUTTON_DPAD_DOWN, F_Y_AXIS, InputState.Negative, tpf);
 
-                if (leftY < DEADZONE_THRESHOLD) {
+                if (leftY < DEADZONE) {
                     if (state.buttons(GLFW_GAMEPAD_BUTTON_DPAD_UP) == GLFW_PRESS) {
                         analogFunctionListeners.get(LEFT_STICK_Y).valueActive(LEFT_STICK_Y, 1.0, tpf);
                     } else if (state.buttons(GLFW_GAMEPAD_BUTTON_DPAD_DOWN) == GLFW_PRESS) {
@@ -443,6 +447,9 @@ public class BigBananaAppState extends BaseAppState {
 
     private float manageInput(GLFWGamepadState state, int in, FunctionId fid, boolean invert, float tpf) {
         float newstate = state.axes(in);
+        if (Math.abs(newstate) < DEADZONE) {
+            newstate = 0;
+        }
         //if (newstate != prevstateAxes[in]) {
         //System.out.println("Axis X " + x);
         //System.out.println("Axis Y " + state.axes(GLFW_GAMEPAD_AXIS_LEFT_Y));
