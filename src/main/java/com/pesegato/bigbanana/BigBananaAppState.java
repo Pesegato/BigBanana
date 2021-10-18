@@ -48,7 +48,7 @@ public class BigBananaAppState extends BaseAppState {
 
     int prevstate[] = new int[15];
     int prevstateAxesDpad[] = new int[2];
-    //float prevstateAxes[] = new float[5];
+    float prevstateAxes[] = new float[6];
 
     //public static Axis PAD_MOVE_VERTICAL;
     //public static Axis PAD_MOVE_HORIZONTAL;
@@ -450,18 +450,16 @@ public class BigBananaAppState extends BaseAppState {
         if (Math.abs(newstate) < DEADZONE) {
             newstate = 0;
         }
-        //if (newstate != prevstateAxes[in]) {
-        //System.out.println("Axis X " + x);
-        //System.out.println("Axis Y " + state.axes(GLFW_GAMEPAD_AXIS_LEFT_Y));
-        AnalogFunctionListener l = analogFunctionListeners.get(fid);
-        if (l == null)
-            return 0;
-        if (invert) {
-            newstate = -newstate;
+        if (newstate != prevstateAxes[in]) {
+            prevstateAxes[in] = newstate;
+            AnalogFunctionListener l = analogFunctionListeners.get(fid);
+            if (l == null)
+                return 0;
+            if (invert) {
+                newstate = -newstate;
+            }
+            l.valueActive(fid, newstate, tpf);
         }
-        l.valueActive(fid, newstate, tpf);
-        //    prevstateAxes[in] = newstate;
-        //}
         return newstate;
     }
 
