@@ -447,6 +447,9 @@ public class BigBananaAppState extends BaseAppState {
 
     private float manageInput(GLFWGamepadState state, int in, FunctionId fid, boolean invert, float tpf) {
         float newstate = state.axes(in);
+        if (invert) {
+            newstate = -newstate;
+        }
         if (Math.abs(newstate) < DEADZONE) {
             newstate = 0;
         }
@@ -455,9 +458,6 @@ public class BigBananaAppState extends BaseAppState {
             AnalogFunctionListener l = analogFunctionListeners.get(fid);
             if (l == null)
                 return 0;
-            if (invert) {
-                newstate = -newstate;
-            }
             l.valueActive(fid, newstate, tpf);
         }
         return newstate;
