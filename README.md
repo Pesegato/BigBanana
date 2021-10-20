@@ -1,12 +1,19 @@
 # BigBanana [![Build Status](https://travis-ci.org/Pesegato/BigBanana.svg?branch=master)](https://travis-ci.org/Pesegato/BigBanana) [![](https://jitpack.io/v/Pesegato/bigbanana.svg)](https://jitpack.io/#Pesegato/bigbanana)
 Mouseless (bananaful?) navigation for jme3 applications
 
+#### !!! WARNING !!! This flavor of the library is hacky, depends on https://github.com/Pesegato/Lemur instead of standard Lemur because it interfaces directly with GLFW.
+
 This library provide input utilities built on top of [Lemur](https://github.com/jMonkeyEngine-Contributions/Lemur), expecially useful when your game is played without the mouse and keyboard:
+* proper Gamepad support (requires LWJGL3)
 * configurable input bindings by means of a Property file (which can also be used for other user settings)
 * remap input appstate
 * 4-way navigation
 * extra stuff
 * sample app
+
+## Proper Gamepad support
+
+BigBanana uses the Gamepad input API from GLFW, to get input mapping right on supported Gamepads.
 
 ## Configurable input bindings
 
@@ -16,21 +23,34 @@ First, you must define the custom "actions" that will be bound to some input. Th
     public static void main(String[] args) {
         BBBindings.addKeyMapping(MY_COOL_ACTION);
         BBBindings.addPadMapping(MY_COOL_ACTION);
+        //No need to use setUseJoysticks!
+        //settings.setUseJoysticks(true);
 
 Then, you must attach the `BigBananaAppState`. The construction requires a `BananaPeel`, which is an interface for your application.
 
     String getFilePath(); //path of Properties file to save
     Properties getProperties(); //Properties must be loaded beforehand
     String getDefaultKeyBind(String key); //default key bindings for your application. Must include the custom actions.
-    String getDefaultPadBind(String key); //default pad bindings for your application. Must include the custom actions.
+    BBInput getDefaultPadBind(String key); //default pad bindings for your application. Must include the custom actions.
+
+How do you implement the last method? See below for an example:
+
+    @Override
+    public BBInput getDefaultPadBind(String key) {
+        switch (key) {
+            case MY_COOL_ACTION:
+                return BBInput.BB_BUTTON_X;
+        }
+        return null;
+    }
 
 Finally, on your application you can map ingame functions to the remapped actions.
 
-    inputMapper.map(F_COOLACTION, BBBindings.getK(MY_COOL_ACTION));
+     BigBananaAppState bbas = getState(BigBananaAppState.class);
+     bbas.map(F_COOLACTION, MY_COOL_ACTION, this);
+     bbas.mapBack(this);
 
-If you want to add the pad counterpart:
-
-    inputMapper.map(F_COOLACTION, BBBindings.getP(MY_COOL_ACTION));
+Please note that you are mapping both keyboard and gamepad input, and therefore `this` must implement both `StateFunctionListener` and `AnalogFunctionListener`.
 
 ## Remap input appstate
 
@@ -59,9 +79,7 @@ When navigating between pages, you probably want to use multiple `BBFocusTravers
 
 ## Extra stuff
 
-BigBananaFunctions.initializeDefaultMappings adds some useful pad input: start, back and select; grouped together.
-When using these and switching between appstates, you should `addStateListener` and `removeStateListener` instead of `activateGroup` and `deactivateGroup`, otherwise the input event might be received by the wrong appstate!
-There's also a StartGameAppState that provides a "Press START to play" functionality.
+There are settings to changed the default deadzone, invert vertical axis, use the DPAD as left stick and the left stick as DPAD. There is a "navigation mode" for menus and a "gameplay mode" for playing. Have a look at the included example!
 
 ## Sample app
 
