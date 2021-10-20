@@ -96,6 +96,7 @@ public class NavigationAppState extends BaseAppState implements StateFunctionLis
 
     @Override
     public void valueActive(FunctionId func, double value, double tpf) {
+        System.out.println("received " + func + " " + value);
         if (func.equals(LEFT_STICK_X))
             valueX = (float) value;
         if (func.equals(LEFT_STICK_Y))
