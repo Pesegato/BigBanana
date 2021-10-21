@@ -172,6 +172,8 @@ public class BigBananaAppState extends BaseAppState {
     }
 
     public void removeStateListener(StateFunctionListener listener, FunctionId id) {
+        if (listener == null)
+            return;
         inputMapper.removeStateListener(listener, id);
         removeStateListenerBB(listener, id);
     }
