@@ -56,7 +56,7 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
         }
     }
 
-    private Spatial getCurrentFocus() {
+    public Spatial getCurrentFocus() {
         return focusMap[focusPointerY][focusPointerX];
     }
 

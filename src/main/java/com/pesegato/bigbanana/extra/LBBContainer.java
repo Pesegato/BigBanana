@@ -54,7 +54,7 @@ public class LBBContainer extends Node {
     }
 
     public void focus() {
-        GuiGlobals.getInstance().requestFocus(c);
+        GuiGlobals.getInstance().requestFocus(bbft.getCurrentFocus());
     }
 
     public void setPreferredSize(Vector3f vector3f) {
