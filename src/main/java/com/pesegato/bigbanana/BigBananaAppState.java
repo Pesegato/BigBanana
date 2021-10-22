@@ -411,18 +411,25 @@ public class BigBananaAppState extends BaseAppState {
                 manageInput(state, GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, F_X_AXIS, InputState.Positive, tpf);
                 manageInput(state, GLFW_GAMEPAD_BUTTON_DPAD_LEFT, F_X_AXIS, InputState.Negative, tpf);
                 if (leftX < DEADZONE) {
+                    AnalogFunctionListener a = analogFunctionListeners.get(LEFT_STICK_X);
                     if (state.buttons(GLFW_GAMEPAD_BUTTON_DPAD_RIGHT) == GLFW_PRESS) {
                         if (1 != prevstateDpadAxes[GLFW_GAMEPAD_AXIS_LEFT_X]) {
-                            analogFunctionListeners.get(LEFT_STICK_X).valueActive(LEFT_STICK_X, 1.0, tpf);
+                            if (a != null) {
+                                a.valueActive(LEFT_STICK_X, 1.0, tpf);
+                            }
                             prevstateDpadAxes[GLFW_GAMEPAD_AXIS_LEFT_X] = 1;
                         }
                     } else if (state.buttons(GLFW_GAMEPAD_BUTTON_DPAD_LEFT) == GLFW_PRESS) {
                         if (-1 != prevstateDpadAxes[GLFW_GAMEPAD_AXIS_LEFT_X]) {
-                            analogFunctionListeners.get(LEFT_STICK_X).valueActive(LEFT_STICK_X, -1.0, tpf);
+                            if (a != null) {
+                                a.valueActive(LEFT_STICK_X, -1.0, tpf);
+                            }
                             prevstateDpadAxes[GLFW_GAMEPAD_AXIS_LEFT_X] = -1;
                         }
                     } else if (0 != prevstateDpadAxes[GLFW_GAMEPAD_AXIS_LEFT_X]) {
-                        analogFunctionListeners.get(LEFT_STICK_X).valueActive(LEFT_STICK_X, 0, tpf);
+                        if (a != null) {
+                            a.valueActive(LEFT_STICK_X, 0, tpf);
+                        }
                         prevstateDpadAxes[GLFW_GAMEPAD_AXIS_LEFT_X] = 0;
                     }
                 }
@@ -431,18 +438,25 @@ public class BigBananaAppState extends BaseAppState {
                 manageInput(state, GLFW_GAMEPAD_BUTTON_DPAD_DOWN, F_Y_AXIS, InputState.Negative, tpf);
 
                 if (leftY < DEADZONE) {
+                    AnalogFunctionListener a = analogFunctionListeners.get(LEFT_STICK_Y);
                     if (state.buttons(GLFW_GAMEPAD_BUTTON_DPAD_UP) == GLFW_PRESS) {
                         if (1 != prevstateDpadAxes[GLFW_GAMEPAD_AXIS_LEFT_Y]) {
-                            analogFunctionListeners.get(LEFT_STICK_Y).valueActive(LEFT_STICK_Y, 1.0, tpf);
+                            if (a != null) {
+                                a.valueActive(LEFT_STICK_Y, 1.0, tpf);
+                            }
                             prevstateDpadAxes[GLFW_GAMEPAD_AXIS_LEFT_Y] = 1;
                         }
                     } else if (state.buttons(GLFW_GAMEPAD_BUTTON_DPAD_DOWN) == GLFW_PRESS) {
                         if (-1 != prevstateDpadAxes[GLFW_GAMEPAD_AXIS_LEFT_Y]) {
-                            analogFunctionListeners.get(LEFT_STICK_Y).valueActive(LEFT_STICK_Y, -1.0, tpf);
+                            if (a != null) {
+                                a.valueActive(LEFT_STICK_Y, -1.0, tpf);
+                            }
                             prevstateDpadAxes[GLFW_GAMEPAD_AXIS_LEFT_Y] = -1;
                         }
                     } else if (0 != prevstateDpadAxes[GLFW_GAMEPAD_AXIS_LEFT_Y]) {
-                        analogFunctionListeners.get(LEFT_STICK_Y).valueActive(LEFT_STICK_Y, 0, tpf);
+                        if (a != null) {
+                            a.valueActive(LEFT_STICK_Y, 0, tpf);
+                        }
                         prevstateDpadAxes[GLFW_GAMEPAD_AXIS_LEFT_Y] = 0;
                     }
                 }
