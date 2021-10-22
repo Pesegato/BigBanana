@@ -4,9 +4,11 @@ import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
+import com.pesegato.bigbanana.BBFocusTraversal;
 import com.pesegato.bigbanana.BigBananaAppState;
 import com.pesegato.bigbanana.extra.BBStartable;
 import com.pesegato.bigbanana.RemapInputAppState;
+import com.pesegato.bigbanana.extra.LBBFocusTarget;
 import com.pesegato.bigbanana.extra.StartGameAppState;
 import com.simsilica.lemur.*;
 import com.simsilica.lemur.input.AnalogFunctionListener;
@@ -18,6 +20,7 @@ import com.simsilica.state.CompositeAppState;
 public class SampleMenuAppState extends CompositeAppState implements BBStartable, AnalogFunctionListener, StateFunctionListener {
 
     BigBananaAppState bbas;
+    BBFocusTraversal bbft = new BBFocusTraversal();
     Container mainWindow;
 
     public SampleMenuAppState(Class c) {
@@ -32,13 +35,14 @@ public class SampleMenuAppState extends CompositeAppState implements BBStartable
     @Override
     protected void initialize(Application app) {
         mainWindow = new Container();
+        ((SimpleApplication) getApplication()).getGuiNode().addControl(bbft);
 
         Label title = mainWindow.addChild(new Label("Main menu"));
         title.setFontSize(24);
-        mainWindow.addChild(new ActionButton(new CallMethodAction("Start UI navigation", this, "startNavigation")));
-        mainWindow.addChild(new ActionButton(new CallMethodAction("Start fake game", this, "startGame")));
-        mainWindow.addChild(new ActionButton(new CallMethodAction("Remap input", this, "remapInput")));
-        mainWindow.addChild(new ActionButton(new CallMethodAction("Quit", this, "quitGame")));
+        bbft.addFocusable(addMenuItem(new CallMethodAction("Start UI navigation", this, "startNavigation")), 0, 0, 1, 1);
+        bbft.addFocusable(addMenuItem(new CallMethodAction("Start fake game", this, "startGame")), 1, 0, 1, 1);
+        bbft.addFocusable(addMenuItem(new CallMethodAction("Remap input", this, "remapInput")), 2, 0, 1, 1);
+        bbft.addFocusable(addMenuItem(new CallMethodAction("Quit", this, "quitGame")), 3, 0, 1, 1);
         mainWindow.addChild(new Label("Press START to play (sort of...)"));
         // Calculate a standard scale and position from the app's camera
         // height
@@ -55,6 +59,13 @@ public class SampleMenuAppState extends CompositeAppState implements BBStartable
         mainWindow.setLocalScale(1.5f * standardScale);
 
         bbas = getState(BigBananaAppState.class);
+    }
+
+    private ActionButton addMenuItem(CallMethodAction c) {
+        ActionButton ab = new ActionButton(c);
+        mainWindow.addChild(ab);
+        ab.addControl(new LBBFocusTarget());
+        return ab;
     }
 
     public void startNavigation() {
