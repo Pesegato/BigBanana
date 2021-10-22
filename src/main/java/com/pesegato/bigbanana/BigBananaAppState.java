@@ -14,6 +14,7 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.control.Control;
 import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.event.MouseEventControl;
+import com.simsilica.lemur.focus.FocusNavigationState;
 import com.simsilica.lemur.input.*;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWGamepadState;
@@ -295,6 +296,8 @@ public class BigBananaAppState extends BaseAppState {
     @Override
     protected void initialize(Application app) {
         inputMapper = GuiGlobals.getInstance().getInputMapper();
+        getStateManager().detach(getState(FocusNavigationState.class));
+        getStateManager().attach(new BananaNavigationState(inputMapper, GuiGlobals.getInstance().getFocusManagerState()));
         if (GLFW.glfwJoystickIsGamepad(GLFW_JOYSTICK_1)) {
             log.info("Gamepad 1 is present, entering real Bananaful mode");
             bananaful = true;
