@@ -45,6 +45,9 @@ public class NavigationAppState extends BaseAppState implements StateFunctionLis
         stateGuiNode.attachChild(bottom.geo);
         bbft.addFocusable(bottom.geo, 3, 0, 3, 1);
 
+        //uncomment to try out unfocusable IngameBanana
+        //bbft.setEnabled(false, 1, 1, 2, 1);
+
         GuiGlobals.getInstance().requestFocus(b[0][0].geo);
 
         leftStick = new Geometry("MyQuad", new Quad(10, 10));

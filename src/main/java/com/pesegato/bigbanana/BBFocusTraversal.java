@@ -20,6 +20,7 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
     static final int FOCUSMAP_LENGTH = 50;
 
     Spatial[][] focusMap = new Spatial[FOCUSMAP_LENGTH][FOCUSMAP_LENGTH];
+    boolean[][] disableMap = new boolean[FOCUSMAP_LENGTH][FOCUSMAP_LENGTH];
     int focusPointerX = 0;
     int focusPointerY = 0;
 
@@ -31,6 +32,14 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
         for (int i = row; i < row + height; i++) {
             for (int j = column; j < column + width; j++) {
                 focusMap[i][j] = target;
+            }
+        }
+    }
+
+    public void setEnabled(boolean enabled, int row, int column, int width, int height) {
+        for (int i = row; i < row + height; i++) {
+            for (int j = column; j < column + width; j++) {
+                disableMap[i][j] = !enabled;
             }
         }
     }
@@ -86,8 +95,14 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
     }
 
     int goUp(Spatial sptl, int index) {
-        if (index == 0) {
-            return 0;
+        boolean foundEnabled = false;
+        while (!foundEnabled) {
+            if (index == 0) {
+                return 0;
+            }
+            if (disableMap[index - 1][focusPointerX]) {
+                index--;
+            } else foundEnabled = true;
         }
         Spatial s = focusMap[index - 1][focusPointerX];
         if (s == null) {
@@ -107,9 +122,14 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
     }
 
     int goRight(Spatial sptl, int index) {
-        //System.out.println("can go right "+index);
-        if (index > focusMap.length) {
-            return focusPointerX;
+        boolean foundEnabled = false;
+        while (!foundEnabled) {
+            if (index > focusMap.length) {
+                return focusPointerX;
+            }
+            if (disableMap[focusPointerY][index + 1]) {
+                index++;
+            } else foundEnabled = true;
         }
         Spatial s = focusMap[focusPointerY][index + 1];
         if (s == null) {
@@ -129,9 +149,14 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
     }
 
     int goLeft(Spatial sptl, int index) {
-        //System.out.println("can go left "+index);
-        if (index == 0) {
-            return 0;
+        boolean foundEnabled = false;
+        while (!foundEnabled) {
+            if (index == 0) {
+                return 0;
+            }
+            if (disableMap[focusPointerY][index - 1]) {
+                index--;
+            } else foundEnabled = true;
         }
         Spatial s = focusMap[focusPointerY][index - 1];
         if (s == null) {
@@ -151,8 +176,14 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
     }
 
     int goDown(Spatial sptl, int index) {
-        if (index > focusMap.length) {
-            return focusPointerX;
+        boolean foundEnabled = false;
+        while (!foundEnabled) {
+            if (index > focusMap.length) {
+                return focusPointerX;
+            }
+            if (disableMap[index + 1][focusPointerX]) {
+                index++;
+            } else foundEnabled = true;
         }
         Spatial s = focusMap[index + 1][focusPointerX];
         if (s == null) {
