@@ -117,7 +117,7 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
                 && sptl != s) {
             return index - 1;
         }
-        return goLeft(sptl, index - 1);
+        return goUp(sptl, index - 1);
 
     }
 
