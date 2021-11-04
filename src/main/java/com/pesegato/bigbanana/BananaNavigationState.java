@@ -37,14 +37,10 @@ package com.pesegato.bigbanana;
  */
 
 
-import java.util.*;
-
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
 import com.jme3.scene.Spatial;
-
 import com.simsilica.lemur.Container;
-import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.core.GuiControl;
 import com.simsilica.lemur.focus.FocusManagerState;
 import com.simsilica.lemur.focus.FocusNavigationFunctions;
