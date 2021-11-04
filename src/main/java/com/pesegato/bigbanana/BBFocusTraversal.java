@@ -78,7 +78,7 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
     public Spatial getRelativeFocus(Spatial sptl, FocusTraversal.TraversalDirection td) {
         switch (td) {
             case Up:
-                focusPointerY = goUp(sptl, focusPointerY);
+                goUp(sptl);
                 break;
             case Right:
                 goRight(sptl);
@@ -87,38 +87,38 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
                 goLeft(sptl);
                 break;
             case Down:
-                focusPointerY = goDown(sptl, focusPointerY);
+                goDown(sptl);
                 break;
         }
         System.out.println("focus on " + focusPointerX + " " + focusPointerY);
         return focusMap[focusPointerY][focusPointerX];
     }
 
-    int goUp(Spatial sptl, int index) {
-        boolean foundEnabled = false;
-        while (!foundEnabled) {
-            if (index == 0) {
-                return 0;
+    void goUp(Spatial sptl) {
+        Spatial s = null;
+        int j = focusPointerY;
+        while ((s == null) && (j > 0)) {
+            j--;
+            s = getValidFocusTarget(sptl, j, focusPointerX);
+        }
+        if ((s != null) && (sptl != s)) {
+            focusPointerY = j;
+            return;
+        }
+        System.out.println("best effort");
+        //best effort
+        j = focusPointerY;
+        for (int i = 0; i < focusMap.length; i++) {
+            while ((s == null) && (j > 0)) {
+                j--;
+                s = getValidFocusTarget(sptl, j, i);
             }
-            if (disableMap[index - 1][focusPointerX]) {
-                index--;
-            } else foundEnabled = true;
+            if ((s != null) && (sptl != s)) {
+                focusPointerX = i;
+                focusPointerY = j;
+                return;
+            }
         }
-        Spatial s = focusMap[index - 1][focusPointerX];
-        if (s == null) {
-            return focusPointerY;
-        }
-        BBFocusTarget bbt = s.getControl(BBFocusTarget.class);
-        if (bbt == null) {
-            System.out.println("Component at " + (index - 1) + " " + focusPointerX + " don't have a BBFocusTarget Control");
-            return focusPointerY;
-        }
-        if (bbt.isFocusable()
-                && sptl != s) {
-            return index - 1;
-        }
-        return goUp(sptl, index - 1);
-
     }
 
     void goRight(Spatial sptl) {
@@ -126,7 +126,7 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
         int i = focusPointerX;
         while ((s == null) && (i < focusMap.length - 1)) {
             i++;
-            s = getValidFocusTarget(focusPointerY, i);
+            s = getValidFocusTarget(sptl, focusPointerY, i);
         }
         if ((s != null) && (sptl != s)) {
             focusPointerX = i;
@@ -138,7 +138,7 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
         for (int j = 0; j < focusMap.length; j++) {
             while ((s == null) && (i < focusMap.length - 1)) {
                 i++;
-                s = getValidFocusTarget(j, i);
+                s = getValidFocusTarget(sptl, j, i);
             }
             if ((s != null) && (sptl != s)) {
                 focusPointerX = i;
@@ -153,7 +153,7 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
         int i = focusPointerX;
         while ((s == null) && (i > 0)) {
             i--;
-            s = getValidFocusTarget(focusPointerY, i);
+            s = getValidFocusTarget(sptl, focusPointerY, i);
         }
         if ((s != null) && (sptl != s)) {
             focusPointerX = i;
@@ -165,7 +165,7 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
         for (int j = 0; j < focusMap.length; j++) {
             while ((s == null) && (i > 0)) {
                 i--;
-                s = getValidFocusTarget(j, i);
+                s = getValidFocusTarget(sptl, j, i);
             }
             if ((s != null) && (sptl != s)) {
                 focusPointerX = i;
@@ -175,7 +175,34 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
         }
     }
 
-    private Spatial getValidFocusTarget(int y, int x) {
+    void goDown(Spatial sptl) {
+        Spatial s = null;
+        int j = focusPointerY;
+        while ((s == null) && (j < focusMap.length - 1)) {
+            j++;
+            s = getValidFocusTarget(sptl, j, focusPointerX);
+        }
+        if ((s != null) && (sptl != s)) {
+            focusPointerY = j;
+            return;
+        }
+        System.out.println("best effort");
+        //best effort
+        j = focusPointerY;
+        for (int i = 0; i < focusMap.length; i++) {
+            while ((s == null) && (j < focusMap.length - 1)) {
+                j++;
+                s = getValidFocusTarget(sptl, j, i);
+            }
+            if ((s != null) && (sptl != s)) {
+                focusPointerX = i;
+                focusPointerY = j;
+                return;
+            }
+        }
+    }
+
+    private Spatial getValidFocusTarget(Spatial old, int y, int x) {
         if (x < 0) {
             return null;
         }
@@ -189,6 +216,9 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
         if (s == null) {
             return null;
         }
+        if (s == old) {
+            return null;
+        }
         BBFocusTarget bbt = s.getControl(BBFocusTarget.class);
         if (bbt == null) {
             System.out.println("Component at " + y + " " + x + " don't have a BBFocusTarget Control");
@@ -198,33 +228,6 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
             return s;
         }
         return null;
-    }
-
-    int goDown(Spatial sptl, int index) {
-        boolean foundEnabled = false;
-        while (!foundEnabled) {
-            if (index > focusMap.length) {
-                return focusPointerX;
-            }
-            if (disableMap[index + 1][focusPointerX]) {
-                index++;
-            } else foundEnabled = true;
-        }
-        Spatial s = focusMap[index + 1][focusPointerX];
-        if (s == null) {
-            return focusPointerY;
-        }
-        BBFocusTarget bbt = s.getControl(BBFocusTarget.class);
-        if (bbt == null) {
-            System.out.println("Component at " + (index + 1) + " " + focusPointerX + " don't have a BBFocusTarget Control");
-            return focusPointerY;
-        }
-        if (bbt.isFocusable()
-                && sptl != s) {
-            return index + 1;
-        }
-        return goDown(sptl, index + 1);
-
     }
 
     @Override
