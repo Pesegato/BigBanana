@@ -107,8 +107,8 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
         }
         System.out.println("best effort");
         //best effort
-        j = focusPointerY;
         for (int i = 0; i < focusMap.length; i++) {
+            j = focusPointerY;
             while ((s == null) && (j > 0)) {
                 j--;
                 s = getValidFocusTarget(sptl, j, i);
@@ -134,8 +134,8 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
         }
         System.out.println("best effort");
         //best effort
-        i = focusPointerX;
         for (int j = 0; j < focusMap.length; j++) {
+            i = focusPointerX;
             while ((s == null) && (i < focusMap.length - 1)) {
                 i++;
                 s = getValidFocusTarget(sptl, j, i);
@@ -161,8 +161,8 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
         }
         System.out.println("best effort");
         //best effort
-        i = focusPointerX;
         for (int j = 0; j < focusMap.length; j++) {
+            i = focusPointerX;
             while ((s == null) && (i > 0)) {
                 i--;
                 s = getValidFocusTarget(sptl, j, i);
@@ -188,8 +188,8 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
         }
         System.out.println("best effort");
         //best effort
-        j = focusPointerY;
         for (int i = 0; i < focusMap.length; i++) {
+            j = focusPointerY;
             while ((s == null) && (j < focusMap.length - 1)) {
                 j++;
                 s = getValidFocusTarget(sptl, j, i);
