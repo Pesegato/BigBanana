@@ -81,10 +81,10 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
                 focusPointerY = goUp(sptl, focusPointerY);
                 break;
             case Right:
-                focusPointerX = goRight(sptl, focusPointerX);
+                goRight(sptl);
                 break;
             case Left:
-                focusPointerX = goLeft(sptl, focusPointerX);
+                goLeft(sptl);
                 break;
             case Down:
                 focusPointerY = goDown(sptl, focusPointerY);
@@ -121,58 +121,83 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
 
     }
 
-    int goRight(Spatial sptl, int index) {
-        boolean foundEnabled = false;
-        while (!foundEnabled) {
-            if (index > focusMap.length) {
-                return focusPointerX;
+    void goRight(Spatial sptl) {
+        Spatial s = null;
+        int i = focusPointerX;
+        while ((s == null) && (i < focusMap.length - 1)) {
+            i++;
+            s = getValidFocusTarget(focusPointerY, i);
+        }
+        if ((s != null) && (sptl != s)) {
+            focusPointerX = i;
+            return;
+        }
+        System.out.println("best effort");
+        //best effort
+        i = focusPointerX;
+        for (int j = 0; j < focusMap.length; j++) {
+            while ((s == null) && (i < focusMap.length - 1)) {
+                i++;
+                s = getValidFocusTarget(j, i);
             }
-            if (disableMap[focusPointerY][index + 1]) {
-                index++;
-            } else foundEnabled = true;
+            if ((s != null) && (sptl != s)) {
+                focusPointerX = i;
+                focusPointerY = j;
+                return;
+            }
         }
-        Spatial s = focusMap[focusPointerY][index + 1];
-        if (s == null) {
-            return focusPointerX;
-        }
-        BBFocusTarget bbt = s.getControl(BBFocusTarget.class);
-        if (bbt == null) {
-            System.out.println("Component at " + focusPointerY + " " + (index + 1) + " don't have a BBFocusTarget Control");
-            return focusPointerY;
-        }
-        if (bbt.isFocusable()
-                && sptl != s) {
-            return index + 1;
-        }
-        return goRight(sptl, index + 1);
-
     }
 
-    int goLeft(Spatial sptl, int index) {
-        boolean foundEnabled = false;
-        while (!foundEnabled) {
-            if (index == 0) {
-                return 0;
-            }
-            if (disableMap[focusPointerY][index - 1]) {
-                index--;
-            } else foundEnabled = true;
+    void goLeft(Spatial sptl) {
+        Spatial s = null;
+        int i = focusPointerX;
+        while ((s == null) && (i > 0)) {
+            i--;
+            s = getValidFocusTarget(focusPointerY, i);
         }
-        Spatial s = focusMap[focusPointerY][index - 1];
+        if ((s != null) && (sptl != s)) {
+            focusPointerX = i;
+            return;
+        }
+        System.out.println("best effort");
+        //best effort
+        i = focusPointerX;
+        for (int j = 0; j < focusMap.length; j++) {
+            while ((s == null) && (i > 0)) {
+                i--;
+                s = getValidFocusTarget(j, i);
+            }
+            if ((s != null) && (sptl != s)) {
+                focusPointerX = i;
+                focusPointerY = j;
+                return;
+            }
+        }
+    }
+
+    private Spatial getValidFocusTarget(int y, int x) {
+        if (x < 0) {
+            return null;
+        }
+        if (y < 0) {
+            return null;
+        }
+        if (disableMap[y][x]) {
+            return null;
+        }
+        Spatial s = focusMap[y][x];
         if (s == null) {
-            return focusPointerX;
+            return null;
         }
         BBFocusTarget bbt = s.getControl(BBFocusTarget.class);
         if (bbt == null) {
-            System.out.println("Component at " + focusPointerY + " " + (index - 1) + " don't have a BBFocusTarget Control");
-            return focusPointerY;
+            System.out.println("Component at " + y + " " + x + " don't have a BBFocusTarget Control");
+            return null;
         }
-        if (bbt.isFocusable()
-                && sptl != s) {
-            return index - 1;
+        if (bbt.isFocusable()) {
+            return s;
         }
-        return goLeft(sptl, index - 1);
-
+        return null;
     }
 
     int goDown(Spatial sptl, int index) {
