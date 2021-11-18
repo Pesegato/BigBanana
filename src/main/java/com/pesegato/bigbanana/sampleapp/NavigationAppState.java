@@ -15,12 +15,16 @@ import com.simsilica.lemur.input.AnalogFunctionListener;
 import com.simsilica.lemur.input.FunctionId;
 import com.simsilica.lemur.input.InputState;
 import com.simsilica.lemur.input.StateFunctionListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.pesegato.bigbanana.BigBananaAppState.LEFT_STICK_X;
 import static com.pesegato.bigbanana.BigBananaAppState.LEFT_STICK_Y;
 import static com.pesegato.bigbanana.extra.BigBananaFunctions.F_BACK;
 
 public class NavigationAppState extends BaseAppState implements StateFunctionListener, AnalogFunctionListener {
+
+    static Logger log = LoggerFactory.getLogger(NavigationAppState.class);
 
     Geometry leftStick;
 
@@ -99,7 +103,7 @@ public class NavigationAppState extends BaseAppState implements StateFunctionLis
 
     @Override
     public void valueActive(FunctionId func, double value, double tpf) {
-        System.out.println("received " + func + " " + value);
+        log.info("received {} {}", func, value);
         if (func.equals(LEFT_STICK_X))
             valueX = (float) value;
         if (func.equals(LEFT_STICK_Y))

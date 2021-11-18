@@ -11,11 +11,15 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.control.AbstractControl;
 import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.focus.FocusTraversal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Pesegato
  */
 public class BBFocusTraversal extends AbstractControl implements FocusTraversal {
+
+    static Logger log = LoggerFactory.getLogger(BBFocusTraversal.class);
 
     static final int FOCUSMAP_LENGTH = 50;
 
@@ -58,7 +62,7 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
                 if (focusMap[i][j] == s) {
                     focusPointerX = j;
                     focusPointerY = i;
-                    System.out.println("focus now set on " + focusPointerX + " " + focusPointerY);
+                    log.trace("focus now set on {} {}", focusPointerX, focusPointerY);
                     return;
                 }
             }
@@ -90,7 +94,7 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
                 goDown(sptl);
                 break;
         }
-        System.out.println("focus on " + focusPointerX + " " + focusPointerY);
+        BigBananaAppState.log.trace("BB focus on {} {}", focusPointerX, focusPointerY);
         return focusMap[focusPointerY][focusPointerX];
     }
 
@@ -105,7 +109,7 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
             focusPointerY = j;
             return;
         }
-        System.out.println("best effort");
+        BigBananaAppState.log.trace("BB nav best effort");
         //best effort
         for (int i = 0; i < focusMap.length; i++) {
             j = focusPointerY;
@@ -132,7 +136,7 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
             focusPointerX = i;
             return;
         }
-        System.out.println("best effort");
+        BigBananaAppState.log.trace("BB nav best effort");
         //best effort
         for (int j = 0; j < focusMap.length; j++) {
             i = focusPointerX;
@@ -159,7 +163,7 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
             focusPointerX = i;
             return;
         }
-        System.out.println("best effort");
+        BigBananaAppState.log.trace("BB nav best effort");
         //best effort
         for (int j = 0; j < focusMap.length; j++) {
             i = focusPointerX;
@@ -186,7 +190,7 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
             focusPointerY = j;
             return;
         }
-        System.out.println("best effort");
+        BigBananaAppState.log.trace("BB nav best effort");
         //best effort
         for (int i = 0; i < focusMap.length; i++) {
             j = focusPointerY;
@@ -221,7 +225,7 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
         }
         BBFocusTarget bbt = s.getControl(BBFocusTarget.class);
         if (bbt == null) {
-            System.out.println("Component at " + y + " " + x + " don't have a BBFocusTarget Control");
+            log.error("Component at {} {} don't have a BBFocusTarget Control", y ,x);
             return null;
         }
         if (bbt.isFocusable()) {
