@@ -231,14 +231,14 @@ public class BigBananaAppState extends BaseAppState {
     }
 
     public void deactivate() {
-        mapLeftStickX(null);
-        mapLeftStickY(null);
         AnalogFunctionListener listener = analogFunctionListeners.get(LEFT_STICK_X);
         if (listener != null) {
             GuiGlobals.getInstance().getInputMapper().removeAnalogListener(listener, LEFT_STICK_X);
             GuiGlobals.getInstance().getInputMapper().removeAnalogListener(listener, LEFT_STICK_Y);
         }
         removeStateListener(stateFunctionListeners.get(F_BACK), F_BACK);
+        mapLeftStickX(null);
+        mapLeftStickY(null);
         deactivateGroup(GROUP_BIGBANANA);
     }
 
