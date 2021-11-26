@@ -29,12 +29,12 @@ public class NavigationAppState extends BaseAppState implements StateFunctionLis
     Geometry leftStick;
 
     BigBananaAppState bbas;
+    BBFocusTraversal bbft = new BBFocusTraversal();
     Node stateGuiNode = new Node();
 
     @Override
     protected void initialize(Application app) {
         IngameBanana b[][] = new IngameBanana[3][3];
-        BBFocusTraversal bbft = new BBFocusTraversal();
         stateGuiNode.addControl(bbft);
         for (int i = 0; i < b.length; i++) {
             for (int j = 0; j < b[i].length; j++) {
@@ -75,6 +75,7 @@ public class NavigationAppState extends BaseAppState implements StateFunctionLis
     @Override
     protected void onEnable() {
         bbas.activate(this, this);
+        bbft.enableMouseListener();
         //GuiGlobals.getInstance().getInputMapper().activateGroup(GROUP_BIGBANANA);
         ((SimpleApplication) getApplication()).getGuiNode().attachChild(stateGuiNode);
         getApplication().getInputManager().setCursorVisible(true);
@@ -83,6 +84,7 @@ public class NavigationAppState extends BaseAppState implements StateFunctionLis
     @Override
     protected void onDisable() {
         bbas.deactivate();
+        bbft.disableMouseListener();
         //GuiGlobals.getInstance().getInputMapper().deactivateGroup(GROUP_BIGBANANA);
         stateGuiNode.removeFromParent();
     }

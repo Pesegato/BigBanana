@@ -38,7 +38,7 @@ public class IngameBanana {
         }
 
         @Override
-        public void valueChanged(FunctionId func, InputState value, double tpf) {
+        public void onValueChanged(FunctionId func, InputState value, double tpf) {
             /*
             if( pressed && value == InputState.Off ) {
                 // Do click processing... the mouse does click processing before
