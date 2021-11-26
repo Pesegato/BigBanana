@@ -5,6 +5,8 @@ import com.simsilica.lemur.Button;
 import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.input.FunctionId;
 import com.simsilica.lemur.input.InputState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * BBFocusTarget for Lemur Buttons
@@ -12,10 +14,12 @@ import com.simsilica.lemur.input.InputState;
 
 public class LBBFocusTarget extends BBFocusTarget {
 
+    static Logger log = LoggerFactory.getLogger(LBBFocusTarget.class);
+
     @Override
     public void onFocusGain() {
         GuiGlobals.getInstance().requestFocus(spatial);
-        System.out.println("LBBFocus gain");
+        log.trace("LBBFocus gain");
     }
 
     @Override
@@ -31,8 +35,8 @@ public class LBBFocusTarget extends BBFocusTarget {
     }
 
     @Override
-    public void valueChanged(FunctionId func, InputState value, double tpf) {
-        System.out.println("LBBFocus changed");
+    public void onValueChanged(FunctionId func, InputState value, double tpf) {
+        log.trace("LBBFocus changed");
     }
 
 }

@@ -55,6 +55,11 @@ public class LBBContainer extends Node {
 
     public void focus() {
         GuiGlobals.getInstance().requestFocus(bbft.getCurrentFocus());
+        bbft.enableMouseListener();
+    }
+
+    public void defocus() {
+        bbft.disableMouseListener();
     }
 
     public void setPreferredSize(Vector3f vector3f) {
