@@ -8,15 +8,14 @@ package com.pesegato.bigbanana;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.control.AbstractControl;
-import com.simsilica.lemur.GuiGlobals;
-import com.simsilica.lemur.focus.FocusNavigationFunctions;
 import com.simsilica.lemur.focus.FocusTarget;
-import com.simsilica.lemur.input.StateFunctionListener;
+import com.simsilica.lemur.input.FunctionId;
+import com.simsilica.lemur.input.InputState;
 
 /**
  * @author Pesegato
  */
-public abstract class BBFocusTarget extends AbstractControl implements FocusTarget, StateFunctionListener {
+public abstract class BBFocusTarget extends AbstractControl implements FocusTarget {
 
     boolean isFocused;
 
@@ -27,17 +26,17 @@ public abstract class BBFocusTarget extends AbstractControl implements FocusTarg
 
     @Override
     public void focusGained() {
-        GuiGlobals.getInstance().getInputMapper().addStateListener(this, FocusNavigationFunctions.F_ACTIVATE);
         isFocused = true;
         onFocusGain();
     }
 
     @Override
     public void focusLost() {
-        GuiGlobals.getInstance().getInputMapper().removeStateListener(this, FocusNavigationFunctions.F_ACTIVATE);
         isFocused = false;
         onFocusLost();
     }
+
+    public abstract void onValueChanged(FunctionId func, InputState value, double tpf);
 
     public abstract void onFocusGain();
 

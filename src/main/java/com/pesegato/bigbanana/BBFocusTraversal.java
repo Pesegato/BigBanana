@@ -5,19 +5,33 @@
  */
 package com.pesegato.bigbanana;
 
+import com.jme3.input.event.MouseButtonEvent;
+import com.jme3.input.event.MouseMotionEvent;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.AbstractControl;
+import com.jme3.scene.control.Control;
 import com.simsilica.lemur.GuiGlobals;
+import com.simsilica.lemur.event.DefaultMouseListener;
+import com.simsilica.lemur.event.MouseEventControl;
+import com.simsilica.lemur.focus.FocusNavigationFunctions;
 import com.simsilica.lemur.focus.FocusTraversal;
+import com.simsilica.lemur.input.FunctionId;
+import com.simsilica.lemur.input.InputState;
+import com.simsilica.lemur.input.StateFunctionListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.simsilica.lemur.focus.FocusNavigationFunctions.F_ACTIVATE;
 
 /**
  * @author Pesegato
  */
-public class BBFocusTraversal extends AbstractControl implements FocusTraversal {
+public class BBFocusTraversal extends AbstractControl implements FocusTraversal, StateFunctionListener {
 
     static Logger log = LoggerFactory.getLogger(BBFocusTraversal.class);
 
@@ -27,6 +41,8 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
     boolean[][] disableMap = new boolean[FOCUSMAP_LENGTH][FOCUSMAP_LENGTH];
     int focusPointerX = 0;
     int focusPointerY = 0;
+    BBMouseListener bbml = new BBMouseListener();
+    List<Spatial> spatialList = new ArrayList<>();
 
     public void setFocusMapSize(int width, int height) {
         focusMap = new Spatial[width][height];
@@ -38,6 +54,27 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
                 focusMap[i][j] = target;
             }
         }
+        spatialList.add(target);
+    }
+
+    public void enableMouseListener() {
+        GuiGlobals.getInstance().getInputMapper().addStateListener(this, FocusNavigationFunctions.F_ACTIVATE);
+        for (Spatial s : spatialList) {
+            MouseEventControl.addListenersToSpatial(s, bbml);
+        }
+    }
+
+    public void disableMouseListener() {
+        GuiGlobals.getInstance().getInputMapper().removeStateListener(this, FocusNavigationFunctions.F_ACTIVATE);
+        for (Spatial s : spatialList) {
+            MouseEventControl.removeListenersFromSpatial(s, bbml);
+        }
+    }
+
+    @Override
+    public void valueChanged(FunctionId func, InputState value, double tpf) {
+        log.trace("BBFT reveiced event");
+        getCurrentFocus().getControl(BBFocusTarget.class).onValueChanged(func, value, tpf);
     }
 
     public void setEnabled(boolean enabled, int row, int column, int width, int height) {
@@ -58,7 +95,7 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
 
     public void setCurrentFocus(Spatial s) {
         for (int i = 0; i < focusMap.length; i++) {
-            for (int j = 0; j < focusMap[i].length; i++) {
+            for (int j = 0; j < focusMap[i].length; j++) {
                 if (focusMap[i][j] == s) {
                     focusPointerX = j;
                     focusPointerY = i;
@@ -225,7 +262,7 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
         }
         BBFocusTarget bbt = s.getControl(BBFocusTarget.class);
         if (bbt == null) {
-            log.error("Component at {} {} don't have a BBFocusTarget Control", y ,x);
+            log.error("Component at {} {} don't have a BBFocusTarget Control", y, x);
             return null;
         }
         if (bbt.isFocusable()) {
@@ -248,4 +285,50 @@ public class BBFocusTraversal extends AbstractControl implements FocusTraversal 
     protected void controlRender(RenderManager rm, ViewPort vp) {
     }
 
+    class BBMouseListener extends DefaultMouseListener {
+
+        int prevX;
+        int prevY;
+
+        @Override
+        public void mouseMoved(MouseMotionEvent event, Spatial target, Spatial capture) {
+            int newX = event.getX();
+            int newY = event.getY();
+            if ((prevX == newX) && (prevY == newY)) {
+                return;
+            }
+            log.trace("BBML moved {}", target);
+            prevY = newY;
+            prevX = newX;
+            Spatial s = getCurrentFocus();
+            log.trace("BBML current focus: {}", s);
+            s.getControl(BBFocusTarget.class).focusLost();
+            GuiGlobals.getInstance().requestFocus(target);
+            BBFocusTarget bbft = getBBFocusTarget(target);
+            bbft.focusGained();
+            setCurrentFocus(target);
+        }
+
+
+        @Override
+        public void mouseButtonEvent(MouseButtonEvent event, Spatial target, Spatial capture) {
+            super.mouseButtonEvent(event, target, capture);
+            if (event.isPressed()) {
+                valueChanged(F_ACTIVATE, InputState.Positive, 0);
+            } else if (event.isReleased()) {
+                valueChanged(F_ACTIVATE, InputState.Off, 0);
+            }
+        }
+
+        public <T extends BBFocusTarget> T getBBFocusTarget(Spatial s) {
+            int numControls = s.getNumControls();
+            for (int i = 0; i < numControls; i++) {
+                Control c = s.getControl(i);
+                if (BBFocusTarget.class.isAssignableFrom(c.getClass())) {
+                    return (T) c;
+                }
+            }
+            return null;
+        }
+    }
 }
