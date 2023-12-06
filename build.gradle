@@ -1,14 +1,13 @@
-import org.gradle.api.publish.maven.MavenPublication
-
 plugins {
-		id "java"
-		id "maven-publish"
-//  id "eclipse"
+		id 'java-library'
+		id 'maven-publish'
 		id "idea"
-		id 'com.palantir.git-version' version '0.12.3'
+		id 'signing'
+		id 'com.palantir.git-version' version '3.0.0'
 }
 
-project.version gitVersion()
+group 'io.github.pesegato'
+version gitVersion()
 
 println("version : '${version}'")
 
@@ -19,16 +18,12 @@ ext {
 		isWindows = org.gradle.internal.os.OperatingSystem.current().windows
 }
 
-group = "com.pesegato"
-
 repositories {
-		//mavenLocal()
-		jcenter()
+		mavenLocal()
 		mavenCentral()
-		maven { url 'https://jitpack.io' }
 }
 
-def jme3 = ["v": '3.2.1-stable', "g": "org.jmonkeyengine"]
+def jme3 = ["v": '3.6.1-stable', "g": "org.jmonkeyengine"]
 /*
 def pesegato = ["g" :"com.pesegato" ,"v":"latest.integration"]
 if (isCiServer){
@@ -39,15 +34,14 @@ if (isCiServer){
 
 dependencies {
 		// jme
-		implementation "org.jmonkeyengine:jme3-lwjgl3:3.3.2-stable"
-		implementation 'org.slf4j:slf4j-api:1.7.21'
-		implementation 'com.github.Pesegato:lemur:1.15.1-PESEGATO'
+		implementation "org.jmonkeyengine:jme3-lwjgl3:${jme3.v}"
+		implementation 'org.slf4j:slf4j-api:2.0.9'
+		implementation 'com.simsilica:lemur:1.16.1-PESEGATO'
+	implementation 'com.simsilica:lemur-proto:1.13.0'
 		//implementation 'com.simsilica:lemur:1.13.0'
-		implementation 'com.simsilica:sio2:1.1.0'
-		implementation 'com.google.guava:guava:21.0'
-		implementation 'net.java.dev.jna:jna:5.6.0'
-		implementation 'net.java.dev.jna:jna-platform:5.6.0'
-		runtimeOnly 'ch.qos.logback:logback-classic:1.2.3'
+		implementation 'com.simsilica:sio2:1.8.0'
+		implementation 'com.google.guava:guava:32.1.3-jre'
+		runtimeOnly 'ch.qos.logback:logback-classic:1.3.13'
 		runtimeOnly "${jme3.g}:jme3-lwjgl3:${jme3.v}"
 
 		//utils
@@ -57,37 +51,64 @@ dependencies {
 		//test
 }
 
-publishing {
-		publications {
-				mavenJava(MavenPublication) {
-						from components.java
-				}
-		}
+signing {
+	sign publishing.publications
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			from components.java
+			pom {
+				name = 'BigBanana'
+				description = 'Mouseless (bananaful?) navigation for jme3 applications'
+				url = 'https://github.com/Pesegato/BigBanana/'
+				inceptionYear = '2016'
+				licenses {
+					license {
+						name = 'BSD 3-Clause License'
+						url = 'https://github.com/Pesegato/BigBanana/blob/main/LICENSE'
+					}
+				}
+				developers {
+					developer {
+						id = 'pesegato'
+						name = 'Pesegato Ameiurus Melas'
+						email = 'pesegato@outlook.com'
+					}
+				}
+				scm {
+					connection = 'scm:git:git://github.com/pesegato/bigbanana.git'
+					developerConnection = 'scm:git:ssh://git@github.com/pesegato/bigbanana.git'
+					url = 'https://github.com/Pesegato/BigBanana/'
+				}
+			}
+		}
+	}
+	repositories {
+		maven {
+			url "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+			credentials {
+				username = ossrhUsername
+				password = ossrhPassword
+			}
+		}
+	}
+}
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(11)
+	}
+	withJavadocJar()
+	withSourcesJar()
+}
+
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 compileJava.doLast {
 		def buildDate = new Date().format('yyyy-MM-dd HHmm')
 		println "Writing ${rootProject.name}.build.date: " + buildDate
-		new File(destinationDir, "${rootProject.name}.build.date").text = buildDate
-		new File(destinationDir, "${rootProject.name}.build.version").text = "${version}"
-}
-
-
-task sourcesJar(type: Jar, dependsOn: classes) {
-		archiveClassifier.set("sources")
-		from sourceSets.main.allSource
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-		archiveClassifier.set("javadoc")
-		from javadoc.destinationDir
-}
-
-artifacts {
-		archives sourcesJar
-		archives javadocJar
+		destinationDirectory.file("${rootProject.name}.build.date").get().asFile.text = buildDate
+		destinationDirectory.file("${rootProject.name}.build.version").get().asFile.text = "${version}"
 }
