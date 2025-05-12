@@ -4,6 +4,7 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.system.AppSettings;
 import com.pesegato.bigbanana.*;
 import com.simsilica.lemur.GuiGlobals;
+import com.simsilica.lemur.input.BBGuiGlobals;
 import com.simsilica.lemur.style.BaseStyles;
 
 import java.io.FileReader;
@@ -33,7 +34,8 @@ public class Main extends SimpleApplication implements BigBananaPeel {
 
     @Override
     public void simpleInitApp() {
-        GuiGlobals.initialize(this);
+        BBGuiGlobals.initialize(this);
+        //GuiGlobals.initialize(this);
         GuiGlobals globals = GuiGlobals.getInstance();
         BaseStyles.loadGlassStyle();
         globals.getStyles().setDefaultStyle("glass");

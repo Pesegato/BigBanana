@@ -9,7 +9,7 @@ import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
 import com.jme3.input.KeyInput;
 import com.jme3.input.KeyNames;
-import com.jme3.input.event.MouseButtonEvent;
+import com.jme3.input.event.*;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.Control;
 import com.simsilica.lemur.GuiGlobals;
@@ -71,7 +71,7 @@ public class BigBananaAppState extends BaseAppState {
     HashMap<FunctionId, AnalogFunctionListener> analogFunctionListeners = new HashMap<>();
     HashMap<BBInput, FunctionId> glfwMap = new HashMap<>();
 
-    InputMapper inputMapper;
+    BBInputMapper inputMapper;
     GLFWGamepadState state;
     BigBananaPeel peel;
 
@@ -295,7 +295,7 @@ public class BigBananaAppState extends BaseAppState {
 
     @Override
     protected void initialize(Application app) {
-        inputMapper = GuiGlobals.getInstance().getInputMapper();
+        inputMapper = (BBInputMapper) GuiGlobals.getInstance().getInputMapper();
         getStateManager().detach(getState(FocusNavigationState.class));
         getStateManager().attach(new BananaNavigationState(inputMapper, GuiGlobals.getInstance().getFocusManagerState()));
         if (GLFW.glfwJoystickIsGamepad(GLFW_JOYSTICK_1)) {
@@ -330,7 +330,6 @@ public class BigBananaAppState extends BaseAppState {
             log.error(null, e);
             e.printStackTrace();
         }
-        InputMapper inputMapper = GuiGlobals.getInstance().getInputMapper();
         //inputMapper.map(F_X_AXIS, InputState.Negative, PAD_MOVE_VERTICAL);
         inputMapper.map(F_X_AXIS, KEYBOARD_MOVE_RIGHT);
         inputMapper.map(F_X_AXIS, InputState.Negative, KEYBOARD_MOVE_LEFT);
@@ -571,7 +570,8 @@ public class BigBananaAppState extends BaseAppState {
     }
 
     private void pressed(FunctionId f, float tpf, InputState is) {
-        GuiGlobals.getInstance().getInputMapper().listenerMap.get(f).notifyStateChanged(f, is);
+        //GuiGlobals.getInstance().getInputMapper().listenerMap.get(f).notifyStateChanged(f, is);
+        inputMapper.bbnotifyStateChanged(f, tpf, is);
     }
 
     @Override
