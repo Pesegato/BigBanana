@@ -38,7 +38,7 @@ dependencies {
 		implementation "org.jmonkeyengine:jme3-lwjgl3:${jme3.v}"
 		implementation 'org.slf4j:slf4j-api:2.0.9'
 		//implementation 'com.simsilica:lemur:1.16.1-PESEGATO'
-	implementation 'com.simsilica:lemur:1.17.0-SNAPSHOT'
+	implementation 'com.simsilica:lemur:1.16.0'
 	implementation 'com.simsilica:lemur-proto:1.13.0'
 		//implementation 'com.simsilica:lemur:1.13.0'
 		implementation 'com.simsilica:sio2:1.8.0'
