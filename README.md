@@ -1,6 +1,11 @@
 # BigBanana [![Build Status](https://travis-ci.org/Pesegato/BigBanana.svg?branch=master)](https://travis-ci.org/Pesegato/BigBanana) [![](https://jitpack.io/v/Pesegato/bigbanana.svg)](https://jitpack.io/#Pesegato/bigbanana)
 Mouseless (bananaful?) navigation for jme3 applications
 
+<div align="center">
+<img src="bigbanana-logo.png" alt="BigBanana logo" style="width:400px;"/>
+</div>
+
+
 #### This flavor of the library interfaces directly with GLFW.
 
 This library provide input utilities built on top of [Lemur](https://github.com/jMonkeyEngine-Contributions/Lemur), expecially useful when your game is played without the mouse and keyboard:
