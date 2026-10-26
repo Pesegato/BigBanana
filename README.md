@@ -3,7 +3,7 @@
 # Mouseless (bananaful?) navigation for jme3 applications
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.pesegato/BigBanana?style=for-the-badge)](https://central.sonatype.com/artifact/io.github.pesegato/BigBanana)
-[![GitHub Packages](https://img.shields.io/github/v/tag/Pesegato/BigBanana?label=GitHub%20Packages&style=for-the-badge)](https://github.com/Pesegato/BigBanana/packages/3331567)
+[![GitHub Packages](https://img.shields.io/github/v/tag/Pesegato/BigBanana?label=GitHub%20Packages&style=for-the-badge)](https://github.com/Pesegato/BigBanana/packages/3342750)
 [![javadoc](https://javadoc.io/badge2/io.github.pesegato/BigBanana/javadoc.svg?style=for-the-badge)](https://javadoc.io/doc/io.github.pesegato/BigBanana)
 
 </div>
